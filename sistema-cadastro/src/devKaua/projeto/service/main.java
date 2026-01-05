@@ -5,7 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-public class LeituraFormulario {
+public class main {
     public static void main(String[] args) {
         File formulario = new File("/home/jaua/IdeaProjects/sistema-cadastro--java/sistema-cadastro/src/devKaua/projeto/formulario/formulario.txt");
         try (FileReader fileReader = new FileReader(formulario)){
