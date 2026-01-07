@@ -25,20 +25,28 @@ public class AlteracoesPet {
             System.out.println(pet);
         }
     }
-    public void listarPetPorCriterio(Pet pet) {
+    public Pet listarPetPorCriterio(int resposta, String consulta) {
+/*
         boolean encontrado = false;
         for (Pet p : this.listaPet) {
             if (pet == p) {
                 encontrado = true;
                 break;
             }
+        }*/
+        String mensagemError = "Pet não encontrado.";
+        switch (resposta) {
+            case 1:
+                Pet valorPetNome = this.pet.consultaNome(consulta);
+                return valorPetNome;
+            case 2:
+                Pet valorPetIdade =this.pet.consultaIdade(consulta);
+                return valorPetIdade;
+            case 3:
+                Pet valorPetRaca =this.pet.consultaRaca(consulta);
+                return valorPetRaca;
         }
-        if (encontrado == false) {
-            System.out.println("Pet não encontrado na lista.");
-            return;
-        }
-
-
+        return null;
     }
 
     public void alterarNomePet(String nome) {
