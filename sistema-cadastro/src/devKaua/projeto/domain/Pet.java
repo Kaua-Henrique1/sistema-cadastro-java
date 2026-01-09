@@ -23,7 +23,7 @@ public class Pet {
     public Pet consultaNome(String nome) {
         List<Pet> lista = listaPet.getListaPet();
         for (Pet pet : lista) {
-            if (pet.getNome() == nome) {
+            if (pet.getNome().equalsIgnoreCase(nome)) {
                 return pet;
             }
         }
@@ -33,8 +33,7 @@ public class Pet {
     public Pet consultaIdade(String idade) {
         List<Pet> lista = listaPet.getListaPet();
         for (Pet pet : lista) {
-            String strIdade = Integer.toString(pet.getIdade());
-            if (strIdade == idade) {
+            if (pet.getNome().equalsIgnoreCase(idade)) {
                 return pet;
             }
         }
@@ -44,7 +43,7 @@ public class Pet {
     public Pet consultaRaca(String raca) {
         List<Pet> lista = listaPet.getListaPet();
         for (Pet pet : lista) {
-            if (pet.getRaca() == raca) {
+            if (pet.getNome().equalsIgnoreCase(raca)) {
                 return pet;
             }
         }
