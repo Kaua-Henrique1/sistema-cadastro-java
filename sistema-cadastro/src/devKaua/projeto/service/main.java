@@ -1,12 +1,12 @@
 package devKaua.projeto.service;
 
+import devKaua.projeto.domain.AlteracoesPet;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Scanner;;
 
 public class main {
     public static void main(String[] args) {
@@ -23,31 +23,44 @@ public class main {
             throw new RuntimeException(e);
         }
 
-        boolean sairTrue = false;
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("1: Cadastrar um novo pet");
-        System.out.println("2: Alterar os dados do pet cadastrado");
-        System.out.println("3: Deletar um pet cadastrado");
-        System.out.println("4: Listar todos os pets cadastrados");
-        System.out.println("5: Listar pets por algum critério (idade, nome, raça)");
-        System.out.println("6: Sair");
+        boolean sairTrue = true;
+        while (sairTrue) {
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("1: Cadastrar um novo pet");
+            System.out.println("2: Alterar os dados do pet cadastrado");
+            System.out.println("3: Deletar um pet cadastrado");
+            System.out.println("4: Listar todos os pets cadastrados");
+            System.out.println("5: Listar pets por algum critério (idade, nome, raça)");
+            System.out.println("6: Sair");
+            System.out.println();
 
-        System.out.println("Escolha sua opção: (Digite apenas de 1 a 6)");
-        String opcao = scanner.nextLine();
+            System.out.println("Escolha sua opção: (Digite apenas de 1 a 6)");
+            String opcao = scanner.nextLine();
+            try {
+                int opcaoInt = Integer.parseInt(opcao);
+                if (opcaoInt < 1 || opcaoInt > 6) {
+                    System.out.println("Informe um número entre 1 a 6.");
+                } else {
+                    AlteracoesPet alteracoesPet = new AlteracoesPet();
+                    switch (opcaoInt) {
+                        case 1:
+                            alteracoesPet.cadastroPetLista();
+                        case 2:
+                        case 3:
+                            alteracoesPet.deletarPetLista();
+                        case 4:
+                            alteracoesPet.listagemPetLista();
+                        case 5:
+                            alteracoesPet.listarPetPorCriterio();
+                        case 6:
+                    }
 
-        String regex = "[1-6\\$]";
-        Pattern regras = Pattern.compile(regex);
-        Matcher matcher = regras.matcher(opcao);
+                    sairTrue = false;
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Error Texto: Digite Apenas numero.");
+            }
 
-        System.out.println("Posicoes encontradas");
-        while (matcher.end()) {
-            System.out.print(matcher.start()+" "+matcher.group()+"\n");
-        }
-        if (opcao != regex) {
-            int opcaoInt = Integer.parseInt(opcao);
-        }
-        if (opcaoInt < 1 || opcaoInt > 6) {
-            System.out.println("Informe um número entre 1 a 6.");
         }
     }
 }

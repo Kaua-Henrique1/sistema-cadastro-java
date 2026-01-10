@@ -10,10 +10,5 @@ public class Test01 {
         Pet pingo = new Pet("Pingo","Ligeiro", Sexo.MACHO, TipoAnimal.GATO, 2, "Viralata");
         Pet carlito = new Pet("Carlito","Esperto", Sexo.MACHO, TipoAnimal.CACHORRO, 8, "Viralata");
 
-        AlteracoesPet listaPet = new AlteracoesPet();
-        listaPet.cadastroPetLista(pingo);
-        listaPet.cadastroPetLista(carlito);
-
-        System.out.println(listaPet.listarPetPorCriterio(1,"Pingo"));
     }
 }
