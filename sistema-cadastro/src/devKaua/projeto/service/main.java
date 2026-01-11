@@ -11,17 +11,6 @@ import java.util.Scanner;;
 public class main {
     public static void main(String[] args) {
         File formulario = new File("/home/jaua/IdeaProjects/sistema-cadastro--java/sistema-cadastro/src/devKaua/projeto/formulario/formulario.txt");
-        try (FileReader fileReader = new FileReader(formulario)) {
-            BufferedReader br = new BufferedReader(fileReader);
-            String linha;
-
-            while ((linha = br.readLine()) != null) {
-                System.out.println(linha);
-            }
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
 
         boolean sairTrue = true;
         while (sairTrue) {
@@ -44,6 +33,15 @@ public class main {
                     AlteracoesPet alteracoesPet = new AlteracoesPet();
                     switch (opcaoInt) {
                         case 1:
+                            try (FileReader fileReader = new FileReader(formulario)) {
+                                BufferedReader br = new BufferedReader(fileReader);
+                                String linha;
+                                while ((linha = br.readLine()) != null) {
+                                    System.out.println(linha);
+                                }
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
                             alteracoesPet.cadastroPetLista();
                         case 2:
                         case 3:

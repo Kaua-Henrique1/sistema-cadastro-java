@@ -4,20 +4,22 @@ import java.util.List;
 
 public class Pet {
     private String nome;
-    private String sobrenome;
-    private int idade;
     private Sexo sexo;
     private TipoAnimal tipoAnimal;
+    private String[] endereco;
+    private double idade;
+    private double peso;
     private String raca;
     private AlteracoesPet listaPet;
 
-    public Pet(String nome, String sobrenome, Sexo sexo, TipoAnimal tipoAnimal, int idade, String raca) {
+    public Pet(String nome,double idade, Sexo sexo, TipoAnimal tipoAnimal, String raca, double peso, String[] endereco) {
         this.nome = nome;
-        this.sobrenome = sobrenome;
         this.sexo = sexo;
         this.tipoAnimal = tipoAnimal;
         this.idade = idade;
         this.raca = raca;
+        this.endereco = endereco;
+        this.peso = peso;
     }
 
     public Pet consultaNome(String nome) {
@@ -50,20 +52,28 @@ public class Pet {
         return null;
     }
 
+    public String[] getEndereco() {
+        return endereco;
+    }
+
+    public void setEndereco(String[] endereco) {
+        this.endereco = endereco;
+    }
+
+    public double getPeso() {
+        return peso;
+    }
+
+    public void setPeso(double peso) {
+        this.peso = peso;
+    }
+
     public String getNome() {
         return nome;
     }
 
     public void setNome(String nome) {
         this.nome = nome;
-    }
-
-    public String getSobrenome() {
-        return sobrenome;
-    }
-
-    public void setSobrenome(String sobrenome) {
-        this.sobrenome = sobrenome;
     }
 
     public Sexo getSexo() {
@@ -82,11 +92,11 @@ public class Pet {
         this.tipoAnimal = tipoAnimal;
     }
 
-    public int getIdade() {
+    public double getIdade() {
         return idade;
     }
 
-    public void setIdade(int idade) {
+    public void setIdade(double idade) {
         this.idade = idade;
     }
 
