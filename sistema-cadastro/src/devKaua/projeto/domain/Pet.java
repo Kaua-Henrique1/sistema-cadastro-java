@@ -10,7 +10,7 @@ public class Pet {
     private String nome;
     private Sexo sexo;
     private TipoAnimal tipoAnimal;
-    private String[] endereco;
+    private String endereco;
     private String idade;
     private String peso;
     private String raca;
@@ -18,7 +18,7 @@ public class Pet {
     private Scanner scanner = new Scanner(System.in);
     public static final String SEM_DADOS = "NÃO INFORMADO";
 
-    public Pet(String nome, String idade, Sexo sexo, TipoAnimal tipoAnimal, String raca, String peso, String[] endereco) {
+    public Pet(String nome, String idade, Sexo sexo, TipoAnimal tipoAnimal, String raca, String peso, String endereco) {
         this.nome = nome;
         this.sexo = sexo;
         this.tipoAnimal = tipoAnimal;
@@ -173,11 +173,11 @@ public class Pet {
         return idadePet;
     }
 
-    public String[] getEndereco() {
+    public String getEndereco() {
         return endereco;
     }
 
-    public void setEndereco(String[] endereco) {
+    public void setEndereco(String endereco) {
         this.endereco = endereco;
     }
 

@@ -29,31 +29,41 @@ public class AlteracoesPet {
         TipoAnimal tipoPet = pet.verificacaoTipoRegex();
         Sexo sexoPet = pet.verificacaoSexoRegex();
         String[] enderecoPet = pet.verificacaoEnderecoRegex();
+        String enderecoPetFormatado = "";
+        for (String i : enderecoPet) {
+            enderecoPetFormatado = String.format(i+", ");
+        }
+
         String idadePet = pet.verificacaoIdadeRegex();
         String pesoPet = pet.vereficacaoPesoRegex();
 
-        DateTimeFormatter formatada = DateTimeFormatter.ofPattern("yyyyMMDDTHHmm");
+        DateTimeFormatter formatada = DateTimeFormatter.ofPattern("yyyyMMdd");
+        DateTimeFormatter formatadaMin = DateTimeFormatter.ofPattern("HHmm");
         LocalDateTime agora = LocalDateTime.now();
         String dataFormatada = agora.format(formatada);
-        String nomePetFile = nomePet.toUpperCase().trim();
+        String dataFormatadaMin = agora.format(formatadaMin);
+        String nomePetFile = nomePet.toUpperCase().trim().replace(" ","");
 
-        File filePet = new File(dataFormatada+"-"+nomePetFile);
+        String nomeFile = dataFormatada+"T"+dataFormatadaMin+"-"+nomePetFile;
+        File fileDir = new File("petsCadastrados");
+        File filePet = new File(fileDir,nomeFile+".txt");
+
+        fileDir.mkdir();
         try (FileWriter fw = new FileWriter(filePet)){
+            filePet.createNewFile();
             BufferedWriter bw = new BufferedWriter(fw);
             bw.write("1 - "+nomePet);
             bw.write("2 - "+tipoPet);
             bw.write("3 - "+sexoPet);
-            bw.write("4 - "+enderecoPet);
+            bw.write("4 - "+enderecoPetFormatado);
             bw.write("5 - "+idadePet + " anos");
             bw.write("6 - "+pesoPet+"kg");
             bw.write("7 - "+racaPet);
-
-
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        Pet novoPet = new Pet(nomePet, idadePet, sexoPet, tipoPet, racaPet, pesoPet, enderecoPet);
+        Pet novoPet = new Pet(nomePet, idadePet, sexoPet, tipoPet, racaPet, pesoPet, enderecoPetFormatado);
         this.listaPet.add(novoPet);
     }
 
