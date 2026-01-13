@@ -43,17 +43,22 @@ public class main {
                                 throw new RuntimeException(e);
                             }
                             alteracoesPet.cadastroPetLista();
+                            break;
                         case 2:
+                            break;
                         case 3:
                             alteracoesPet.deletarPetLista();
+                            break;
                         case 4:
                             alteracoesPet.listagemPetLista();
+                            break;
                         case 5:
                             alteracoesPet.listarPetPorCriterio();
+                            break;
                         case 6:
+                            sairTrue = false;
                     }
 
-                    sairTrue = false;
                 }
             } catch (NumberFormatException e) {
                 System.out.println("Error Texto: Digite Apenas numero.");

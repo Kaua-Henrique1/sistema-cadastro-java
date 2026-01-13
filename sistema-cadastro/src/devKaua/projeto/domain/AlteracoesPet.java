@@ -1,19 +1,26 @@
 package devKaua.projeto.domain;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class AlteracoesPet {
-    private List<Pet> listaPet;
+    private List<Pet> listaPet = new ArrayList<>();
     private Pet pet;
-    public static final String SEM_DADOS = "NÃO INFORMADO";
     Scanner scanner = new Scanner(System.in);
 
     public AlteracoesPet() {
-        this.listaPet = null;
-        this.pet = null;
+        this.pet = new Pet();
     }
 
     public void cadastroPetLista() {
@@ -24,6 +31,27 @@ public class AlteracoesPet {
         String[] enderecoPet = pet.verificacaoEnderecoRegex();
         String idadePet = pet.verificacaoIdadeRegex();
         String pesoPet = pet.vereficacaoPesoRegex();
+
+        DateTimeFormatter formatada = DateTimeFormatter.ofPattern("yyyyMMDDTHHmm");
+        LocalDateTime agora = LocalDateTime.now();
+        String dataFormatada = agora.format(formatada);
+        String nomePetFile = nomePet.toUpperCase().trim();
+
+        File filePet = new File(dataFormatada+"-"+nomePetFile);
+        try (FileWriter fw = new FileWriter(filePet)){
+            BufferedWriter bw = new BufferedWriter(fw);
+            bw.write("1 - "+nomePet);
+            bw.write("2 - "+tipoPet);
+            bw.write("3 - "+sexoPet);
+            bw.write("4 - "+enderecoPet);
+            bw.write("5 - "+idadePet + " anos");
+            bw.write("6 - "+pesoPet+"kg");
+            bw.write("7 - "+racaPet);
+
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         Pet novoPet = new Pet(nomePet, idadePet, sexoPet, tipoPet, racaPet, pesoPet, enderecoPet);
         this.listaPet.add(novoPet);

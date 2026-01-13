@@ -1,5 +1,6 @@
 package devKaua.projeto.domain;
 
+import java.sql.SQLOutput;
 import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -14,9 +15,10 @@ public class Pet {
     private String peso;
     private String raca;
     private AlteracoesPet listaPet;
-    private Scanner scanner;
+    private Scanner scanner = new Scanner(System.in);
+    public static final String SEM_DADOS = "NÃO INFORMADO";
 
-    public Pet(String nome,String idade, Sexo sexo, TipoAnimal tipoAnimal, String raca, String peso, String[] endereco) {
+    public Pet(String nome, String idade, Sexo sexo, TipoAnimal tipoAnimal, String raca, String peso, String[] endereco) {
         this.nome = nome;
         this.sexo = sexo;
         this.tipoAnimal = tipoAnimal;
@@ -26,8 +28,12 @@ public class Pet {
         this.peso = peso;
     }
 
+    public Pet() {
+
+    }
+
     public Pet consultaNome(String nome) {
-        List<Pet> lista = listaPet.getListaPet();
+        List<Pet> lista = this.listaPet.getListaPet();
         for (Pet pet : lista) {
             if (pet.getNome().equalsIgnoreCase(nome)) {
                 return pet;
@@ -60,7 +66,7 @@ public class Pet {
         System.out.print("Nome e Sobrenome: ");
         String nomePet = this.scanner.nextLine();
         if (nomePet == null) {
-            return "NÃO INFORMADO";
+            return this.SEM_DADOS;
         }
 
         String regexNome = "[A-Za-z]+(\\s)+[A-Za-z]+(\\s+|$)";
@@ -76,7 +82,7 @@ public class Pet {
         System.out.print("Raça do Pet: ");
         String racaPet = this.scanner.nextLine();
         if (racaPet == null) {
-            return "NÃO INFORMADO";
+            return this.SEM_DADOS;
         }
 
         String regexRaca = "[a-z,A-Z]";
@@ -105,18 +111,20 @@ public class Pet {
     }
 
     public String[] verificacaoEnderecoRegex() {
+        System.out.println("Endereço pet encontrado: ");
         System.out.print("Rua: ");
         String rua = this.scanner.nextLine();
-        if (rua == null) {
-            rua = "NÃO INFORMADO";
-        }
+        String rua1 = this.scanner.nextLine();
 
         System.out.print("Número da casa: ");
         String numero = this.scanner.nextLine();
+        if (numero == null) {
+            numero = this.SEM_DADOS;
+        }
         System.out.print("Cidade: ");
         String cidade = this.scanner.nextLine();
 
-        String[] endereco = {rua, numero, cidade};
+        String[] endereco = {rua1, numero, cidade};
         return endereco;
     }
 
@@ -135,7 +143,7 @@ public class Pet {
         if (!condicionalPeso.find()) {
             throw new IllegalArgumentException("Digite apenas numero e ',' ou '.'.");
         }
-        String pesoPet = pesoPetStr.replace(',','.');
+        String pesoPet = pesoPetStr.replace(',', '.');
 
         if (Double.parseDouble(pesoPet) > 60 || Double.parseDouble(pesoPet) < 0.5) {
             throw new IllegalArgumentException("Peso ireal. Digite entre 0.5kl a 60kl");
@@ -147,7 +155,7 @@ public class Pet {
         System.out.print("Idade do Pet: ");
         String idadePetStr = this.scanner.nextLine();
         if (idadePetStr == null) {
-            return "NÃO INFORMADO";
+            return this.SEM_DADOS;
         }
 
         String regexIdadePeso = "[0-9]+((\\\\.|,)[0-9]+)?";
@@ -157,7 +165,7 @@ public class Pet {
         if (!condicionalIdade.find()) {
             throw new IllegalArgumentException("Digite apenas numero e ',' ou '.'.");
         }
-        String idadePet = idadePetStr.replace(',','.');
+        String idadePet = idadePetStr.replace(',', '.');
 
         if (Double.parseDouble(idadePet) > 20) {
             throw new IllegalArgumentException("Digite uma idade máxima de 20 anos.");
