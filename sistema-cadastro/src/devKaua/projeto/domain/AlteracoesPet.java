@@ -28,11 +28,9 @@ public class AlteracoesPet {
         String racaPet = pet.verificacaoRacaRegex();
         TipoAnimal tipoPet = pet.verificacaoTipoRegex();
         Sexo sexoPet = pet.verificacaoSexoRegex();
-        String[] enderecoPet = pet.verificacaoEnderecoRegex();
-        String enderecoPetFormatado = "";
-        for (String i : enderecoPet) {
-            enderecoPetFormatado = String.format(i+", ");
-        }
+
+        Endereco enderecoPet = pet.verificacaoEnderecoRegex();
+        String enderecoPetStr = enderecoPet.toFormatado();
 
         String idadePet = pet.verificacaoIdadeRegex();
         String pesoPet = pet.vereficacaoPesoRegex();
@@ -42,28 +40,35 @@ public class AlteracoesPet {
         LocalDateTime agora = LocalDateTime.now();
         String dataFormatada = agora.format(formatada);
         String dataFormatadaMin = agora.format(formatadaMin);
-        String nomePetFile = nomePet.toUpperCase().trim().replace(" ","");
+        String nomePetFile = nomePet.toUpperCase().trim().replace(" ", "");
 
-        String nomeFile = dataFormatada+"T"+dataFormatadaMin+"-"+nomePetFile;
+        String nomeFile = dataFormatada + "T" + dataFormatadaMin + "-" + nomePetFile;
         File fileDir = new File("petsCadastrados");
-        File filePet = new File(fileDir,nomeFile+".txt");
+        File filePet = new File(fileDir, nomeFile + ".txt");
 
         fileDir.mkdir();
-        try (FileWriter fw = new FileWriter(filePet)){
+        try (FileWriter fw = new FileWriter(filePet)) {
             filePet.createNewFile();
             BufferedWriter bw = new BufferedWriter(fw);
-            bw.write("1 - "+nomePet);
-            bw.write("2 - "+tipoPet);
-            bw.write("3 - "+sexoPet);
-            bw.write("4 - "+enderecoPetFormatado);
-            bw.write("5 - "+idadePet + " anos");
-            bw.write("6 - "+pesoPet+"kg");
-            bw.write("7 - "+racaPet);
+            bw.write("1 - " + nomePet);
+            bw.newLine();
+            bw.write("2 - " + tipoPet);
+            bw.newLine();
+            bw.write("3 - " + sexoPet);
+            bw.newLine();
+            bw.write("4 - " + enderecoPetStr);
+            bw.newLine();
+            bw.write("5 - " + idadePet + " anos");
+            bw.newLine();
+            bw.write("6 - " + pesoPet + "kg");
+            bw.newLine();
+            bw.write("7 - " + racaPet);
+            bw.flush();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        Pet novoPet = new Pet(nomePet, idadePet, sexoPet, tipoPet, racaPet, pesoPet, enderecoPetFormatado);
+        Pet novoPet = new Pet(nomePet, idadePet, sexoPet, tipoPet, racaPet, pesoPet, enderecoPet);
         this.listaPet.add(novoPet);
     }
 
@@ -85,13 +90,32 @@ public class AlteracoesPet {
     }
 
     public Pet listarPetPorCriterio() {
-        System.out.println("(1 = Consulta por nome/ 2 = Consulta por idade/ 3 = Consulta por Raça ): ");
-        int resposta = this.scanner.nextInt();
+        System.out.println("(1 = Consulta Cachorro/ 2 = Consulta por Gato: ");
+        int respostaTipoAnimal = this.scanner.nextInt();
+
+
+        int contadorPet = 0;
+        if (respostaTipoAnimal == 1) {
+            for (Pet petOpcoes : this.listaPet) {
+                if (petOpcoes.getTipoAnimal() != TipoAnimal.CACHORRO) {
+                    continue;
+                }
+                contadorPet += 1;
+                Endereco endereco = petOpcoes.getEndereco();
+                System.out.println(contadorPet + ". " + petOpcoes.getNome() + " - " + petOpcoes.getTipoAnimal()
+                        + " - " + petOpcoes.getSexo() + " - " + endereco.getRua() + ", " + endereco.getNumero()
+                        + " - " + endereco.getCidade() + " - " + " - " + petOpcoes.getIdade() + " anos - "
+                        + petOpcoes.getPeso() + "kg - " + petOpcoes.getRaca());
+            }
+        }
+        System.out.println("(1 = Consulta por nome ou sobrenome/ 2 = Consulta por idade/ 3 = Consulta por Raça ): ");
+        System.out.println("(4 = Consulta por Peso/ 5 = Consulta por Sexo/ 6 = Consulta por Endereço ): ");
+        int respostaConsulta1 = this.scanner.nextInt();
 
         System.out.println("Informe dado do Pet: ");
         String consulta = this.scanner.nextLine();
 
-        switch (resposta) {
+        switch (respostaConsulta1) {
             case 1:
                 Pet valorPetNome = this.pet.consultaNome(consulta);
                 return valorPetNome;
@@ -101,6 +125,15 @@ public class AlteracoesPet {
             case 3:
                 Pet valorPetRaca = this.pet.consultaRaca(consulta);
                 return valorPetRaca;
+            case 4:
+                Pet valorPetPeso = this.pet.consultaRaca(consulta);
+                return valorPetPeso;
+            case 5:
+                Pet valorPetSexo = this.pet.consultaRaca(consulta);
+                return valorPetSexo;
+            case 6:
+                Pet valorPetEndereco = this.pet.consultaRaca(consulta);
+                return valorPetEndereco;
         }
         return null;
     }

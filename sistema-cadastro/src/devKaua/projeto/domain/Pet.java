@@ -10,7 +10,7 @@ public class Pet {
     private String nome;
     private Sexo sexo;
     private TipoAnimal tipoAnimal;
-    private String endereco;
+    private Endereco endereco;
     private String idade;
     private String peso;
     private String raca;
@@ -18,7 +18,7 @@ public class Pet {
     private Scanner scanner = new Scanner(System.in);
     public static final String SEM_DADOS = "NÃO INFORMADO";
 
-    public Pet(String nome, String idade, Sexo sexo, TipoAnimal tipoAnimal, String raca, String peso, String endereco) {
+    public Pet(String nome, String idade, Sexo sexo, TipoAnimal tipoAnimal, String raca, String peso, Endereco endereco) {
         this.nome = nome;
         this.sexo = sexo;
         this.tipoAnimal = tipoAnimal;
@@ -62,10 +62,20 @@ public class Pet {
         return null;
     }
 
+    public Pet consultaPeso(String raca) {
+        List<Pet> lista = listaPet.getListaPet();
+        for (Pet pet : lista) {
+            if (pet.getNome().equalsIgnoreCase(raca)) {
+                return pet;
+            }
+        }
+        return null;
+    }
+
     public String verificacaoNomeRegex() {
         System.out.print("Nome e Sobrenome: ");
         String nomePet = this.scanner.nextLine();
-        if (nomePet == null) {
+        if (nomePet == "") {
             return this.SEM_DADOS;
         }
 
@@ -81,7 +91,7 @@ public class Pet {
     public String verificacaoRacaRegex() {
         System.out.print("Raça do Pet: ");
         String racaPet = this.scanner.nextLine();
-        if (racaPet == null) {
+        if (racaPet == "") {
             return this.SEM_DADOS;
         }
 
@@ -110,29 +120,31 @@ public class Pet {
         return sexoPet;
     }
 
-    public String[] verificacaoEnderecoRegex() {
+    public Endereco verificacaoEnderecoRegex() {
         System.out.println("Endereço pet encontrado: ");
+        this.scanner.nextLine();
         System.out.print("Rua: ");
         String rua = this.scanner.nextLine();
-        String rua1 = this.scanner.nextLine();
 
         System.out.print("Número da casa: ");
         String numero = this.scanner.nextLine();
-        if (numero == null) {
+        if (numero == "") {
             numero = this.SEM_DADOS;
         }
+
         System.out.print("Cidade: ");
         String cidade = this.scanner.nextLine();
 
-        String[] endereco = {rua1, numero, cidade};
+        Endereco endereco = new Endereco(rua, numero, cidade);
+
         return endereco;
     }
 
     public String vereficacaoPesoRegex() {
         System.out.print("Peso do Pet: ");
         String pesoPetStr = this.scanner.nextLine();
-        if (pesoPetStr == null) {
-            return "NÃO INFORMADO";
+        if (pesoPetStr == "") {
+            return this.SEM_DADOS;
         }
 
 
@@ -154,7 +166,7 @@ public class Pet {
     public String verificacaoIdadeRegex() {
         System.out.print("Idade do Pet: ");
         String idadePetStr = this.scanner.nextLine();
-        if (idadePetStr == null) {
+        if (idadePetStr == "") {
             return this.SEM_DADOS;
         }
 
@@ -173,11 +185,14 @@ public class Pet {
         return idadePet;
     }
 
-    public String getEndereco() {
+
+
+
+    public Endereco getEndereco() {
         return endereco;
     }
 
-    public void setEndereco(String endereco) {
+    public void setEndereco(Endereco endereco) {
         this.endereco = endereco;
     }
 

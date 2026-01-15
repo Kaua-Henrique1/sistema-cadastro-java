@@ -1,8 +1,8 @@
 package devKaua.projeto.domain;
 
 public enum TipoAnimal {
-    GATO(1,"Gato"),
-    CACHORRO(2,"Cachorro");
+    CACHORRO(1,"Cachorro"),
+    GATO(2,"Gato");
 
     private int valor;
     private String animal;

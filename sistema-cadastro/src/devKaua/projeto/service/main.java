@@ -45,6 +45,7 @@ public class main {
                             alteracoesPet.cadastroPetLista();
                             break;
                         case 2:
+                            alteracoesPet.listarPetPorCriterio();
                             break;
                         case 3:
                             alteracoesPet.deletarPetLista();
@@ -53,7 +54,6 @@ public class main {
                             alteracoesPet.listagemPetLista();
                             break;
                         case 5:
-                            alteracoesPet.listarPetPorCriterio();
                             break;
                         case 6:
                             sairTrue = false;
