@@ -31,70 +31,13 @@ public class Pet {
 
     }
 
-    public Pet consultaNome(String nome) {
-        List<Pet> lista = this.listaPet.getListaPet();
-        for (Pet pet : lista) {
-            if (pet.getNome().equalsIgnoreCase(nome)) {
-                System.out.println(pet);
-                return pet;
-            }
-        }
-        return null;
-    }
-
-    public Pet consultaIdade(String idade) {
-        List<Pet> lista = listaPet.getListaPet();
-        for (Pet pet : lista) {
-            if (pet.getIdade().equalsIgnoreCase(idade)) {
-                System.out.println(pet);
-                return pet;
-            }
-        }
-        return null;
-    }
-
-    public Pet consultaRaca(String raca) {
-        List<Pet> lista = listaPet.getListaPet();
-        for (Pet pet : lista) {
-            if (pet.getRaca().equalsIgnoreCase(raca)) {
-                System.out.println(pet);
-                return pet;
-            }
-        }
-        return null;
-    }
-
-    public Pet consultaPeso(String peso) {
-        List<Pet> lista = listaPet.getListaPet();
-        for (Pet pet : lista) {
-            if (pet.getPeso().equalsIgnoreCase(peso)) {
-                System.out.println(pet);
-                return pet;
-            }
-        }
-        return null;
-    }
-
-    public Pet consultaSexo(String sexo) {
-        List<Pet> lista = listaPet.getListaPet();
-        for (Pet pet : lista) {
-            if (pet.sexo.getTipo().equalsIgnoreCase(sexo)) {
-                System.out.println(pet);
-                return pet;
-            }
-        }
-        return null;
-    }
-
-    public Pet consultaEndereco(String enderecoCidade) {
-        List<Pet> lista = listaPet.getListaPet();
-        for (Pet pet : lista) {
-            if (pet.endereco.getCidade().equalsIgnoreCase(enderecoCidade)) {
-                System.out.println(pet);
-                return pet;
-            }
-        }
-        return null;
+    @Override
+    public String toString() {
+        String petFormatado = (". " + getNome() + " - " + getTipoAnimal()
+                + " - " + getSexo() + " - " + endereco.getRua() + ", " + endereco.getNumero()
+                + " - " + endereco.getCidade() + " - " + " - " + getIdade() + " anos - "
+                + getPeso() + "kg - " + getRaca());
+        return petFormatado;
     }
 
     public String verificacaoNomeRegex() {
