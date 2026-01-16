@@ -11,8 +11,8 @@ import java.util.Scanner;;
 public class main {
     public static void main(String[] args) {
         File formulario = new File("/home/jaua/IdeaProjects/sistema-cadastro--java/sistema-cadastro/src/devKaua/projeto/formulario/formulario.txt");
-
         boolean sairTrue = true;
+        AlteracoesPet sistema = new AlteracoesPet();
         while (sairTrue) {
             Scanner scanner = new Scanner(System.in);
             System.out.println("1: Cadastrar um novo pet");
@@ -30,7 +30,6 @@ public class main {
                 if (opcaoInt < 1 || opcaoInt > 6) {
                     System.out.println("Informe um número entre 1 a 6.");
                 } else {
-                    AlteracoesPet alteracoesPet = new AlteracoesPet();
                     switch (opcaoInt) {
                         case 1:
                             try (FileReader fileReader = new FileReader(formulario)) {
@@ -42,16 +41,16 @@ public class main {
                             } catch (IOException e) {
                                 throw new RuntimeException(e);
                             }
-                            alteracoesPet.cadastroPetLista();
+                            sistema.cadastroPetLista();
                             break;
                         case 2:
-                            alteracoesPet.listarPetPorCriterio();
+                            sistema.listarPetPorCriterio();
                             break;
                         case 3:
-                            alteracoesPet.deletarPetLista();
+                            sistema.deletarPetLista();
                             break;
                         case 4:
-                            alteracoesPet.listagemPetLista();
+                            sistema.listagemPetLista();
                             break;
                         case 5:
                             break;

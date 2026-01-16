@@ -1,6 +1,5 @@
 package devKaua.projeto.domain;
 
-import java.sql.SQLOutput;
 import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -36,6 +35,7 @@ public class Pet {
         List<Pet> lista = this.listaPet.getListaPet();
         for (Pet pet : lista) {
             if (pet.getNome().equalsIgnoreCase(nome)) {
+                System.out.println(pet);
                 return pet;
             }
         }
@@ -45,7 +45,8 @@ public class Pet {
     public Pet consultaIdade(String idade) {
         List<Pet> lista = listaPet.getListaPet();
         for (Pet pet : lista) {
-            if (pet.getNome().equalsIgnoreCase(idade)) {
+            if (pet.getIdade().equalsIgnoreCase(idade)) {
+                System.out.println(pet);
                 return pet;
             }
         }
@@ -55,17 +56,41 @@ public class Pet {
     public Pet consultaRaca(String raca) {
         List<Pet> lista = listaPet.getListaPet();
         for (Pet pet : lista) {
-            if (pet.getNome().equalsIgnoreCase(raca)) {
+            if (pet.getRaca().equalsIgnoreCase(raca)) {
+                System.out.println(pet);
                 return pet;
             }
         }
         return null;
     }
 
-    public Pet consultaPeso(String raca) {
+    public Pet consultaPeso(String peso) {
         List<Pet> lista = listaPet.getListaPet();
         for (Pet pet : lista) {
-            if (pet.getNome().equalsIgnoreCase(raca)) {
+            if (pet.getPeso().equalsIgnoreCase(peso)) {
+                System.out.println(pet);
+                return pet;
+            }
+        }
+        return null;
+    }
+
+    public Pet consultaSexo(String sexo) {
+        List<Pet> lista = listaPet.getListaPet();
+        for (Pet pet : lista) {
+            if (pet.sexo.getTipo().equalsIgnoreCase(sexo)) {
+                System.out.println(pet);
+                return pet;
+            }
+        }
+        return null;
+    }
+
+    public Pet consultaEndereco(String enderecoCidade) {
+        List<Pet> lista = listaPet.getListaPet();
+        for (Pet pet : lista) {
+            if (pet.endereco.getCidade().equalsIgnoreCase(enderecoCidade)) {
+                System.out.println(pet);
                 return pet;
             }
         }

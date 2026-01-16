@@ -4,15 +4,11 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class AlteracoesPet {
     private List<Pet> listaPet = new ArrayList<>();
@@ -89,10 +85,10 @@ public class AlteracoesPet {
         }
     }
 
-    public Pet listarPetPorCriterio() {
+    public void listarPetPorCriterio() {
         System.out.println("(1 = Consulta Cachorro/ 2 = Consulta por Gato: ");
         int respostaTipoAnimal = this.scanner.nextInt();
-
+        this.scanner.nextLine();
 
         int contadorPet = 0;
         if (respostaTipoAnimal == 1) {
@@ -107,35 +103,49 @@ public class AlteracoesPet {
                         + " - " + endereco.getCidade() + " - " + " - " + petOpcoes.getIdade() + " anos - "
                         + petOpcoes.getPeso() + "kg - " + petOpcoes.getRaca());
             }
+        } else {
+            for (Pet petOpcoes : this.listaPet) {
+                if (petOpcoes.getTipoAnimal() != TipoAnimal.GATO) {
+                    continue;
+                }
+                contadorPet += 1;
+                Endereco endereco = petOpcoes.getEndereco();
+                System.out.println(contadorPet + ". " + petOpcoes.getNome() + " - " + petOpcoes.getTipoAnimal()
+                        + " - " + petOpcoes.getSexo() + " - " + endereco.getRua() + ", " + endereco.getNumero()
+                        + " - " + endereco.getCidade() + " - " + " - " + petOpcoes.getIdade() + " anos - "
+                        + petOpcoes.getPeso() + "kg - " + petOpcoes.getRaca());
+            }
         }
+        System.out.println();
         System.out.println("(1 = Consulta por nome ou sobrenome/ 2 = Consulta por idade/ 3 = Consulta por Raça ): ");
-        System.out.println("(4 = Consulta por Peso/ 5 = Consulta por Sexo/ 6 = Consulta por Endereço ): ");
+        System.out.println("(4 = Consulta por Peso/ 5 = Consulta por Sexo/ 6 = Consulta por Cidade ): ");
         int respostaConsulta1 = this.scanner.nextInt();
+        this.scanner.nextLine();
 
         System.out.println("Informe dado do Pet: ");
         String consulta = this.scanner.nextLine();
 
         switch (respostaConsulta1) {
+            //Realizar essa regra 1:
+            // Caso o usuário escolha por exemplo, NOME, os resultados da
+            // busca devem trazer PARTES do nome, por exemplo, caso ele pesquise por
+            // FLOR, deverá trazer o caso 2 citado anteriormente.
+
+            //Realizar essa regra 2:
+            // usuário poderá combinar de 1 a 2 critérios de busca
             case 1:
-                Pet valorPetNome = this.pet.consultaNome(consulta);
-                return valorPetNome;
+                this.pet.consultaNome(consulta);
             case 2:
-                Pet valorPetIdade = this.pet.consultaIdade(consulta);
-                return valorPetIdade;
+                this.pet.consultaIdade(consulta);
             case 3:
-                Pet valorPetRaca = this.pet.consultaRaca(consulta);
-                return valorPetRaca;
+                this.pet.consultaRaca(consulta);
             case 4:
-                Pet valorPetPeso = this.pet.consultaRaca(consulta);
-                return valorPetPeso;
+                this.pet.consultaPeso(consulta);
             case 5:
-                Pet valorPetSexo = this.pet.consultaRaca(consulta);
-                return valorPetSexo;
+                this.pet.consultaSexo(consulta);
             case 6:
-                Pet valorPetEndereco = this.pet.consultaRaca(consulta);
-                return valorPetEndereco;
+                this.pet.consultaEndereco(consulta);
         }
-        return null;
     }
 
     public void alterarNomePet(String nome) {
