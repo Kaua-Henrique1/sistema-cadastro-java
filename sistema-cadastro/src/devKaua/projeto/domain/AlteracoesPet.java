@@ -38,11 +38,15 @@ public class AlteracoesPet {
 
         String nomeFile = dataFormatada + "T" + dataFormatadaMin + "-" + nomePetFile;
         File fileDir = new File("petsCadastrados");
+
+        if (!fileDir.exists()) {
+            fileDir.mkdir();
+        }
+
         File filePet = new File(fileDir, nomeFile + ".txt");
 
         fileDir.mkdir();
         try (FileWriter fw = new FileWriter(filePet)) {
-            filePet.createNewFile();
             BufferedWriter bw = new BufferedWriter(fw);
             bw.write("1 - " + nomePet);
             bw.newLine();
@@ -58,91 +62,186 @@ public class AlteracoesPet {
             bw.newLine();
             bw.write("7 - " + racaPet);
             bw.flush();
+
+            Pet novoPet = new Pet(nomePet, idadePet, sexoPet, tipoPet, racaPet, pesoPet, enderecoPet);
+            this.listaPet.add(novoPet);
         } catch (IOException e) {
+            System.out.println("Erro ao tentar salvar o arquivo.");
             throw new RuntimeException(e);
         }
-
-        Pet novoPet = new Pet(nomePet, idadePet, sexoPet, tipoPet, racaPet, pesoPet, enderecoPet);
-        this.listaPet.add(novoPet);
     }
 
-    public void listarPetPorCriterio() {
-        System.out.println("(1 = Consulta Cachorro/ 2 = Consulta por Gato: ");
-        int respostaTipoAnimal = this.scanner.nextInt();
-        this.scanner.nextLine();
-
-        System.out.println("Pets Cadastrados com base na sua consulta: ");
-        int contadorPet = 1;
-        for (Pet petOpcoes : this.listaPet) {
-
-            if (respostaTipoAnimal == 1 && petOpcoes.getTipoAnimal() == TipoAnimal.CACHORRO) {
-                contadorPet += 1;
-                System.out.println(contadorPet + petOpcoes.toString());
-            } else if (respostaTipoAnimal == 2 && petOpcoes.getTipoAnimal() == TipoAnimal.GATO) {
-                contadorPet += 1;
-                System.out.println(contadorPet + petOpcoes.toString());
-            }
+    public List<Pet> listarPetPorCriterio() {
+        List<Pet> listaAtual = consultaTipoPet();
+        if (listaAtual == null) {
+            System.out.println("Nenhum animal desse tipo encontrado.");
+            return listaAtual;
+        }
+        int contador = 1;
+        for (Pet pet : listaAtual) {
+            System.out.println(contador + pet.toString());
+            contador++;
         }
 
-        List<Pet> listaAtual = new ArrayList<>(this.listaPet);
-        System.out.println("Adiciona Pesquisa mais específica:");
-        System.out.println();
-        System.out.println("(1 = Consulta por nome ou sobrenome/ 2 = Consulta por idade/ 3 = Consulta por Raça ): ");
-        System.out.println("(4 = Consulta por Peso/ 5 = Consulta por Sexo/ 6 = Consulta por Cidade ): ");
-        int consultaDesejada = this.scanner.nextInt();
-        this.scanner.nextLine();
+        listaAtual = consultaPet(listaAtual);
+
+        contador = 1;
+        for (Pet pet : listaAtual) {
+            System.out.println(contador + pet.toString());
+            contador++;
+        }
+
+        int adicionarConsulta;
+        do {
+            System.out.println("Deseja adicionar mais um critério (1= Sim/2= Não): ");
+            adicionarConsulta = this.scanner.nextInt();
+            this.scanner.nextLine();
+        } while (adicionarConsulta < 1 || adicionarConsulta > 2);
+
+        if (adicionarConsulta != 1) {
+            return listaAtual;
+        }
+        listaAtual = consultaPet(listaAtual);
+        contador = 1;
+        for (Pet pet : listaAtual) {
+            System.out.println(contador + pet.toString());
+            contador++;
+        }
+        return listaAtual;
+    }
+    public List<Pet> consultaTipoPet() {
+        List<Pet> listaFiltrada = new ArrayList<>();
+
+        int respostaTipoAnimal;
+        do {
+            System.out.println("Digite apenas '1' e '2'.");
+            System.out.println("(1 = Consulta Cachorro/ 2 = Consulta por Gato: ");
+            respostaTipoAnimal = this.scanner.nextInt();
+            this.scanner.nextLine();
+        } while (respostaTipoAnimal < 1 || respostaTipoAnimal > 2);
+
+
+        System.out.println("Pets Cadastrados com base na sua consulta: ");
+        for (Pet petOpcoes : this.listaPet) {
+            if (respostaTipoAnimal == 1 && petOpcoes.getTipoAnimal() == TipoAnimal.CACHORRO) {
+                listaFiltrada.add(petOpcoes);
+            } else if (respostaTipoAnimal == 2 && petOpcoes.getTipoAnimal() == TipoAnimal.GATO) {
+                listaFiltrada.add(petOpcoes);
+            }
+        }
+        return listaFiltrada;
+    }
+    public List<Pet> consultaPet(List<Pet> listaRecebida) {
+        int consultaDesejada;
+        do {
+            System.out.println();
+            System.out.println("Digite apenas de '1' a '6'.");
+            System.out.println("(1 = nome ou sobrenome/ 2 = idade/ 3 = Raça ): ");
+            System.out.println("(4 = Peso/ 5 = Sexo/ 6 = Cidade ): ");
+            consultaDesejada = this.scanner.nextInt();
+            this.scanner.nextLine();
+        } while(consultaDesejada < 1 && consultaDesejada > 6);
 
         System.out.println("Informe dado do Pet: ");
         String consulta = this.scanner.nextLine();
 
-        listaAtual = consultaPet(listaAtual, consulta, consultaDesejada);
-
-        System.out.println("Deseja adicionar mais um critério (1= Sim/2= Não): ");
-        int adicionarConsulta = this.scanner.nextInt();
-        this.scanner.nextLine();
-
-        if (adicionarConsulta == 1) {
-            System.out.println();
-            System.out.println("(1 = Consulta por nome ou sobrenome/ 2 = Consulta por idade/ 3 = Consulta por Raça ): ");
-            System.out.println("(4 = Consulta por Peso/ 5 = Consulta por Sexo/ 6 = Consulta por Cidade ): ");
-            int consultaDesejada2 = this.scanner.nextInt();
-            this.scanner.nextLine();
-
-            if (consultaDesejada2 == consultaDesejada) {
-                throw new RuntimeException("Respostas de consultas iguais.");
-            }
-
-            System.out.println("Informe dado do Pet: ");
-            String consulta2 = this.scanner.nextLine();
-
-            consultaPet(listaAtual, consulta2, consultaDesejada2);
-        }
-    }
-
-    public List<Pet> consultaPet(List<Pet> resposta, String consulta, int respostaConsulta) {
-        switch (respostaConsulta) {
+        List<Pet> resposta = new ArrayList<>();
+        switch (consultaDesejada) {
             case 1:
-                resposta = this.consultaNome(resposta, consulta);
+                resposta = this.consultaNome(listaRecebida, consulta);
                 break;
             case 2:
-                this.consultaIdade(resposta, consulta);
+                resposta = this.consultaIdade(listaRecebida, consulta);
                 break;
             case 3:
-                this.consultaRaca(resposta, consulta);
+                resposta = this.consultaRaca(listaRecebida, consulta);
                 break;
             case 4:
-                this.consultaPeso(resposta, consulta);
+                resposta = this.consultaPeso(listaRecebida, consulta);
                 break;
             case 5:
-                this.consultaSexo(resposta, consulta);
+                resposta = this.consultaSexo(listaRecebida, consulta);
                 break;
             case 6:
-                this.consultaEndereco(resposta, consulta);
+                resposta = this.consultaEndereco(listaRecebida, consulta);
                 break;
             default:
                 System.out.println("Opção inválida");
         }
         return resposta;
+    }
+
+    public void alterarDadosPet() {
+        List<Pet> listaParaAlteraPet = listarPetPorCriterio();
+        System.out.println("Informe o número do pet que deseja alterar: ");
+        int numeroPet = this.scanner.nextInt();
+        this.scanner.nextLine();
+
+        int contador = 0;
+        for (Pet pets : listaParaAlteraPet) {
+            contador++;
+            if (numeroPet == contador) {
+                int consultaDesejada;
+                do {
+                    System.out.println();
+                    System.out.println("Digite apenas de '1' a '6'.");
+                    System.out.println("(1 = nome ou sobrenome/ 2 = idade/ 3 = Raça ): ");
+                    System.out.println("(4 = Peso/ 5 = Endereco ): ");
+                    consultaDesejada = this.scanner.nextInt();
+                    this.scanner.nextLine();
+                } while(consultaDesejada < 1 && consultaDesejada > 5);
+
+                Endereco enderecoPet = null;
+                String dadoAlterar = "";
+                if (consultaDesejada != 5) {
+                    System.out.println("Informe dado do Pet a ser alterado: ");
+                    dadoAlterar = this.scanner.nextLine();
+                } else {
+                    System.out.println("Informe o novo endereço: ");
+                    enderecoPet = this.pet.verificacaoEnderecoRegex();
+                }
+
+                // Falta adicionar funcionalidade para atualizar arquivo TXT dos pets.
+                switch (consultaDesejada) {
+                    case 1:
+                        this.alterarNomePet(pets, dadoAlterar);
+                        break;
+                    case 2:
+                        this.alterarIdadePet(pets, dadoAlterar);
+                        break;
+                    case 3:
+                        this.alterarRacaPet(pets, dadoAlterar);
+                        break;
+                    case 4:
+                        this.alterarPesoPet(pets, dadoAlterar);
+                        break;
+                    case 5:
+                        this.alterarEnderecoPet(pets, enderecoPet);
+                        break;
+                    default:
+                        System.out.println("Opção inválida");
+                }
+            }
+        }
+
+
+
+    }
+
+    public void deletarPetLista() {
+        System.out.println("Nome do Pet para deletar: ");
+        String nomePet = this.scanner.nextLine();
+        for (Pet i : listaPet) {
+            if (i.getNome() == nomePet) {
+                this.listaPet.remove(i);
+            }
+        }
+    }
+
+    public void listagemPetLista() {
+        for (Pet pet : this.listaPet) {
+            System.out.println(pet);
+        }
     }
 
     private void carregarDados() {
@@ -156,7 +255,7 @@ public class AlteracoesPet {
 
         if (arquivos != null) {
             for (File filePet : arquivos) {
-                if (filePet.isFile() && filePet.getName().endsWith(".txt")) {
+                if (filePet.isFile() && filePet.getName().endsWith(".txt")&& filePet.length() > 10) {
                     try (FileReader fr = new FileReader(filePet)) {
                         BufferedReader br = new BufferedReader(fr);
 
@@ -222,29 +321,35 @@ public class AlteracoesPet {
         }
     }
 
-    public void deletarPetLista() {
-        System.out.println("Nome do Pet para deletar: ");
-        String nomePet = this.scanner.nextLine();
-        for (Pet i : listaPet) {
-            if (i.getNome() == nomePet) {
-                this.listaPet.remove(i);
-            }
-        }
+    public void alterarNomePet(Pet petAlterar, String nome) {
+        petAlterar.setNome(nome);
+        System.out.println("Nome Alterado: \\l "+petAlterar.toString());
     }
-
-    public void listagemPetLista() {
-        for (Pet pet : this.listaPet) {
-            System.out.println(pet);
-        }
+    public void alterarIdadePet(Pet petAlterar, String idade) {
+        petAlterar.setIdade(idade);
+        System.out.println("Idade Alterada: \\l "+petAlterar.toString());
+    }
+    public void alterarRacaPet(Pet petAlterar, String raca) {
+        petAlterar.setRaca(raca);
+        System.out.println("Raça Alterada: \\l "+petAlterar.toString());
+    }
+    public void alterarPesoPet(Pet petAlterar, String peso) {
+        petAlterar.setPeso(peso);
+        System.out.println("Peso Alterado: \\l "+petAlterar.toString());
+    }
+    public void alterarEnderecoPet(Pet petAlterar, Endereco endereco) {
+        petAlterar.setEndereco(endereco);
+        System.out.println("Endereço Alterado: \\l "+petAlterar.toString());
     }
 
     private List<Pet> consultaNome(List<Pet> listaAtual, String nome) {
         List<Pet> listaFiltrada = new ArrayList<>();
         boolean encontrou = false;
         for (Pet pet : listaAtual) {
-            if (pet.getNome().toUpperCase().contains(nome.toUpperCase())) {
-                System.out.println(pet.toString());
-                encontrou = true;
+            String nomeDoPet = pet.getNome().toUpperCase();
+            String termoBusca = nome.toUpperCase();
+
+            if (nomeDoPet.contains(termoBusca)) {
                 listaFiltrada.add(pet);
             }
         }
@@ -259,7 +364,6 @@ public class AlteracoesPet {
         boolean encontrou = false;
         for (Pet pet : listaAtual) {
             if (pet.getIdade().equals(idade)) {
-                System.out.println(pet.toString());
                 encontrou = true;
                 listaFiltrada.add(pet);
             }
@@ -275,7 +379,6 @@ public class AlteracoesPet {
         boolean encontrou = false;
         for (Pet pet : listaAtual) {
             if (pet.getRaca().equalsIgnoreCase(raca)) {
-                System.out.println(pet.toString());
                 encontrou = true;
                 listaFiltrada.add(pet);
             }
@@ -291,7 +394,6 @@ public class AlteracoesPet {
         boolean encontrou = false;
         for (Pet pet : listaAtual) {
             if (pet.getPeso().equals(peso)) {
-                System.out.println(pet.toString());
                 encontrou = true;
                 listaFiltrada.add(pet);
             }
@@ -307,7 +409,6 @@ public class AlteracoesPet {
         boolean encontrou = false;
         for (Pet pet : listaAtual) {
             if (pet.getSexo().toString().equalsIgnoreCase(sexo)) {
-                System.out.println(pet.toString());
                 encontrou = true;
                 listaFiltrada.add(pet);
             }
@@ -323,7 +424,6 @@ public class AlteracoesPet {
         boolean encontrou = false;
         for (Pet pet : listaAtual) {
             if (pet.getEndereco().getCidade().equalsIgnoreCase(cidade)) {
-                System.out.println(pet.toString());
                 encontrou = true;
                 listaFiltrada.add(pet);
             }
@@ -332,23 +432,6 @@ public class AlteracoesPet {
             System.out.println("Nenhum pet encontrado nessa cidade.");
         }
         return listaFiltrada;
-    }
-
-    public void alterarNomePet(String nome) {
-        pet.setNome(nome);
-    }
-
-    public void alterarSexoPet(Sexo sexo) {
-        pet.setSexo(sexo);
-    }
-
-    public void alterarTipoAnimalPet(TipoAnimal tipoAnimal) {
-        pet.setTipoAnimal(tipoAnimal);
-    }
-
-
-    public void sairMenu() {
-
     }
 
 

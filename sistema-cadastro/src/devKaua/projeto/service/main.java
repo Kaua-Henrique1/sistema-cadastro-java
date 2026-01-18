@@ -47,10 +47,10 @@ public class main {
                             sistema.listarPetPorCriterio();
                             break;
                         case 3:
-                            sistema.deletarPetLista();
+                            sistema.alterarDadosPet();
                             break;
                         case 4:
-                            // alterar dados pet
+                            sistema.deletarPetLista();
                             break;
                         case 5:
                             sistema.listagemPetLista();
