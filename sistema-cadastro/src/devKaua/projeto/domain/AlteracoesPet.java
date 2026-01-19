@@ -109,6 +109,7 @@ public class AlteracoesPet {
         }
         return listaAtual;
     }
+
     public List<Pet> consultaTipoPet() {
         List<Pet> listaFiltrada = new ArrayList<>();
 
@@ -131,6 +132,7 @@ public class AlteracoesPet {
         }
         return listaFiltrada;
     }
+
     public List<Pet> consultaPet(List<Pet> listaRecebida) {
         int consultaDesejada;
         do {
@@ -140,7 +142,7 @@ public class AlteracoesPet {
             System.out.println("(4 = Peso/ 5 = Sexo/ 6 = Cidade ): ");
             consultaDesejada = this.scanner.nextInt();
             this.scanner.nextLine();
-        } while(consultaDesejada < 1 && consultaDesejada > 6);
+        } while (consultaDesejada < 1 && consultaDesejada > 6);
 
         System.out.println("Informe dado do Pet: ");
         String consulta = this.scanner.nextLine();
@@ -189,34 +191,29 @@ public class AlteracoesPet {
                     System.out.println("(4 = Peso/ 5 = Endereco ): ");
                     consultaDesejada = this.scanner.nextInt();
                     this.scanner.nextLine();
-                } while(consultaDesejada < 1 && consultaDesejada > 5);
+                } while (consultaDesejada < 1 && consultaDesejada > 5);
 
-                Endereco enderecoPet = null;
-                String dadoAlterar = "";
-                if (consultaDesejada != 5) {
-                    System.out.println("Informe dado do Pet a ser alterado: ");
-                    dadoAlterar = this.scanner.nextLine();
-                } else {
+                Endereco alterarEnderecoPet = null;
+                if (consultaDesejada == 5) {
                     System.out.println("Informe o novo endereço: ");
-                    enderecoPet = this.pet.verificacaoEnderecoRegex();
+                    alterarEnderecoPet = this.pet.verificacaoEnderecoRegex();
                 }
 
-                // Falta adicionar funcionalidade para atualizar arquivo TXT dos pets.
                 switch (consultaDesejada) {
                     case 1:
-                        this.alterarNomePet(pets, dadoAlterar);
+                        this.alterarNomePet(pets);
                         break;
                     case 2:
-                        this.alterarIdadePet(pets, dadoAlterar);
+                        this.alterarIdadePet(pets);
                         break;
                     case 3:
-                        this.alterarRacaPet(pets, dadoAlterar);
+                        this.alterarRacaPet(pets);
                         break;
                     case 4:
-                        this.alterarPesoPet(pets, dadoAlterar);
+                        this.alterarPesoPet(pets);
                         break;
                     case 5:
-                        this.alterarEnderecoPet(pets, enderecoPet);
+                        this.alterarEnderecoPet(pets, alterarEnderecoPet);
                         break;
                     default:
                         System.out.println("Opção inválida");
@@ -225,15 +222,32 @@ public class AlteracoesPet {
         }
 
 
-
     }
 
     public void deletarPetLista() {
-        System.out.println("Nome do Pet para deletar: ");
-        String nomePet = this.scanner.nextLine();
-        for (Pet i : listaPet) {
-            if (i.getNome() == nomePet) {
-                this.listaPet.remove(i);
+        List<Pet> listaParaDeletarPet = listarPetPorCriterio();
+        System.out.println("Informe o número do pet que deseja deletar: ");
+        int numeroPet = this.scanner.nextInt();
+        this.scanner.nextLine();
+
+        int contador = 0;
+        String respostaDeletarPet;
+        for (Pet pet : listaParaDeletarPet) {
+            contador++;
+            if (numeroPet == contador) {
+                do {
+                    System.out.println("Digite apenas 'SIM ou NÃO'");
+                    System.out.println("Tem certeza que deseja deletar '" + pet.getNome() + "' do sistema (SIM ou NÃO)? ");
+                    respostaDeletarPet = this.scanner.nextLine();
+                } while (!respostaDeletarPet.equalsIgnoreCase("SIM") && !respostaDeletarPet.equalsIgnoreCase("NÃO"));
+
+                if (respostaDeletarPet.equalsIgnoreCase("SIM")) {
+                    removePetTxt(pet);
+                    this.listaPet.remove(pet);
+                    System.out.println("Pet removido com sucesso!");
+                } else {
+                    return;
+                }
             }
         }
     }
@@ -255,7 +269,7 @@ public class AlteracoesPet {
 
         if (arquivos != null) {
             for (File filePet : arquivos) {
-                if (filePet.isFile() && filePet.getName().endsWith(".txt")&& filePet.length() > 10) {
+                if (filePet.isFile() && filePet.getName().endsWith(".txt")) {
                     try (FileReader fr = new FileReader(filePet)) {
                         BufferedReader br = new BufferedReader(fr);
 
@@ -275,7 +289,7 @@ public class AlteracoesPet {
 
 
                         String linhaEndereco = br.readLine();
-                        String dadosEndereco = linhaEndereco.substring(4); // Remove o "4 - "
+                        String dadosEndereco = linhaEndereco.substring(4);
 
                         String[] partesEndereco = dadosEndereco.split(", ");
 
@@ -321,25 +335,141 @@ public class AlteracoesPet {
         }
     }
 
-    public void alterarNomePet(Pet petAlterar, String nome) {
+    public void alterarNomePet(Pet petAlterar) {
+        String nome = this.pet.verificacaoNomeRegex();
+        String novoNomeTxt = "1 - " + nome;
+        addInformacoesPetTxt(petAlterar, novoNomeTxt);
         petAlterar.setNome(nome);
-        System.out.println("Nome Alterado: \\l "+petAlterar.toString());
+        System.out.println("Nome Alterado: " + petAlterar.toString());
+
     }
-    public void alterarIdadePet(Pet petAlterar, String idade) {
+
+    public void alterarIdadePet(Pet petAlterar) {
+        String idade = this.pet.verificacaoIdadeRegex();
+        String novoIdadeTxt = "5 - " + idade;
+        addInformacoesPetTxt(petAlterar, novoIdadeTxt);
         petAlterar.setIdade(idade);
-        System.out.println("Idade Alterada: \\l "+petAlterar.toString());
+        System.out.println("Idade Alterada: " + petAlterar.toString());
     }
-    public void alterarRacaPet(Pet petAlterar, String raca) {
+
+    public void alterarRacaPet(Pet petAlterar) {
+        String raca = this.pet.verificacaoRacaRegex();
+        String novoRacaTxt = "7 - " + raca;
+        addInformacoesPetTxt(petAlterar, novoRacaTxt);
         petAlterar.setRaca(raca);
-        System.out.println("Raça Alterada: \\l "+petAlterar.toString());
+        System.out.println("Raça Alterada: " + petAlterar.toString());
     }
-    public void alterarPesoPet(Pet petAlterar, String peso) {
+
+    public void alterarPesoPet(Pet petAlterar) {
+        String peso = this.pet.vereficacaoPesoRegex();
+        String novoPesoTxt = "6 - " + peso;
+        addInformacoesPetTxt(petAlterar, novoPesoTxt);
         petAlterar.setPeso(peso);
-        System.out.println("Peso Alterado: \\l "+petAlterar.toString());
+        System.out.println("Peso Alterado: " + petAlterar.toString());
     }
+
     public void alterarEnderecoPet(Pet petAlterar, Endereco endereco) {
+        String novoEnderecoTxt = "4 - " + endereco;
+        addInformacoesPetTxt(petAlterar, novoEnderecoTxt);
         petAlterar.setEndereco(endereco);
-        System.out.println("Endereço Alterado: \\l "+petAlterar.toString());
+        System.out.println("Endereço Alterado: " + petAlterar.toString());
+    }
+
+    private void removePetTxt(Pet pet) {
+        File dir = new File("petsCadastrados");
+
+        if (!dir.exists()) {
+            return;
+        }
+
+        File[] arquivos = dir.listFiles();
+
+        if (arquivos != null) {
+            for (File filePet : arquivos) {
+                if (filePet.isFile() && filePet.getName().endsWith(".txt")) {
+                    boolean arquivoEncontrado = false;
+                    try (FileReader fr = new FileReader(filePet)){
+                        BufferedReader br = new BufferedReader(fr);
+
+                        String linhaNome = br.readLine();
+                        if (linhaNome.contains(pet.getNome())) {
+                            arquivoEncontrado = true;
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    if (arquivoEncontrado) {
+                        filePet.delete();
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    private void addInformacoesPetTxt(Pet pet, String linhaNova) {
+        File dir = new File("petsCadastrados");
+
+        if (!dir.exists()) {
+            return;
+        }
+
+        File[] arquivos = dir.listFiles();
+
+        if (arquivos != null) {
+            for (File filePet : arquivos) {
+                if (filePet.isFile() && filePet.getName().endsWith(".txt")) {
+                    String linhaNome = "";
+                    String linhaTipo = "";
+                    String linhaSexo = "";
+                    String linhaEndereco = "";
+                    String linhaIdade = "";
+                    String linhaPeso = "";
+                    String linhaRaca = "";
+                    try (FileReader fr = new FileReader(filePet)) {
+                        BufferedReader br = new BufferedReader(fr);
+
+                        linhaNome = br.readLine();
+                        if (!linhaNome.contains(pet.getNome())) {
+                            continue;
+                        }
+
+                        linhaTipo = br.readLine();
+                        linhaSexo = br.readLine();
+                        linhaEndereco = br.readLine();
+                        linhaIdade = br.readLine();
+                        linhaPeso = br.readLine();
+                        linhaRaca = br.readLine();
+
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    String[] linhasArquivo = {linhaNome, linhaTipo, linhaSexo, linhaEndereco, linhaIdade, linhaPeso, linhaRaca};
+                    try (FileWriter fw = new FileWriter(filePet)) {
+                        BufferedWriter bw = new BufferedWriter(fw);
+
+                        String linhaNovaCortada = linhaNova.substring(0, 3);
+
+                        for (String linha : linhasArquivo) {
+                            String linhaForCortada = linha.substring(0, 3);
+                            if (linhaForCortada.equals(linhaNovaCortada)) {
+                                bw.write(linhaNova);
+                                bw.newLine();
+                            } else {
+                                bw.write(linha);
+                                bw.newLine();
+                            }
+                        }
+                        bw.flush();
+                        return;
+
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        }
     }
 
     private List<Pet> consultaNome(List<Pet> listaAtual, String nome) {
