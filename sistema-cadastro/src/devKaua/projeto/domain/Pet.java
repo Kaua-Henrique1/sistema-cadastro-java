@@ -1,6 +1,5 @@
 package devKaua.projeto.domain;
 
-import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -83,6 +82,7 @@ public class Pet {
     public Sexo verificacaoSexoRegex() {
         System.out.print("Sexo do Pet(1=Macho/2=Fêmea): ");
         int sexoPetStr = this.scanner.nextInt();
+        scanner.nextLine();
         Sexo sexoPet = Sexo.values()[sexoPetStr - 1];
 
         return sexoPet;
@@ -90,7 +90,6 @@ public class Pet {
 
     public Endereco verificacaoEnderecoRegex() {
         System.out.println("Endereço pet encontrado: ");
-        this.scanner.nextLine();
         System.out.print("Rua: ");
         String rua = this.scanner.nextLine();
 
@@ -152,8 +151,6 @@ public class Pet {
         }
         return idadePet;
     }
-
-
 
 
     public Endereco getEndereco() {

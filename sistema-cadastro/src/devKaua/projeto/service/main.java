@@ -62,7 +62,7 @@ public class main {
 
                 }
             } catch (NumberFormatException e) {
-                System.out.println("Error Texto: Digite Apenas numero.");
+                System.out.println("Error Texto: Digite Apenas número.");
             }
 
         }

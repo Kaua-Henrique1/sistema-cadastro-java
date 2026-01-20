@@ -253,8 +253,10 @@ public class AlteracoesPet {
     }
 
     public void listagemPetLista() {
+        int contador = 1;
         for (Pet pet : this.listaPet) {
-            System.out.println(pet);
+            System.out.println(contador + pet.toString());
+            contador++;
         }
     }
 
@@ -273,20 +275,16 @@ public class AlteracoesPet {
                     try (FileReader fr = new FileReader(filePet)) {
                         BufferedReader br = new BufferedReader(fr);
 
-
                         String linhaNome = br.readLine();
                         String nomePet = linhaNome.split(" - ")[1];
-
 
                         String linhaTipo = br.readLine();
                         String tipoString = linhaTipo.split(" - ")[1];
                         TipoAnimal tipoPet = TipoAnimal.valueOf(tipoString);
 
-
                         String linhaSexo = br.readLine();
                         String sexoString = linhaSexo.split(" - ")[1];
                         Sexo sexoPet = Sexo.valueOf(sexoString);
-
 
                         String linhaEndereco = br.readLine();
                         String dadosEndereco = linhaEndereco.substring(4);
@@ -295,38 +293,27 @@ public class AlteracoesPet {
 
                         String rua = partesEndereco[0];
                         String numero;
-                        String cidade;
+                        String cidade = partesEndereco[2];
 
                         if (partesEndereco.length > 1) {
                             numero = partesEndereco[1];
                         } else {
-                            numero = "S/N";
-                        }
-
-                        if (partesEndereco.length > 2) {
-                            cidade = partesEndereco[2];
-                        } else {
-                            cidade = "Desconhecida";
+                            numero = this.pet.SEM_DADOS;
                         }
 
                         Endereco enderecoPet = new Endereco(rua, numero, cidade);
 
-
                         String linhaIdade = br.readLine();
-                        String idadePet = linhaIdade.split(" - ")[1].replace(" anos", "").trim();
-
+                        String idadePet = linhaIdade.split(" - ")[1].replace(" anos", "");
 
                         String linhaPeso = br.readLine();
-                        String pesoPet = linhaPeso.split(" - ")[1].replace("kg", "").trim();
-
+                        String pesoPet = linhaPeso.split(" - ")[1].replace("kg", "");
 
                         String linhaRaca = br.readLine();
                         String racaPet = linhaRaca.split(" - ")[1];
 
-
                         Pet novoPet = new Pet(nomePet, idadePet, sexoPet, tipoPet, racaPet, pesoPet, enderecoPet);
                         this.listaPet.add(novoPet);
-
                     } catch (Exception e) {
                         System.out.println("Erro ao ler arquivo: " + filePet.getName());
                     }
@@ -335,45 +322,8 @@ public class AlteracoesPet {
         }
     }
 
-    public void alterarNomePet(Pet petAlterar) {
-        String nome = this.pet.verificacaoNomeRegex();
-        String novoNomeTxt = "1 - " + nome;
-        addInformacoesPetTxt(petAlterar, novoNomeTxt);
-        petAlterar.setNome(nome);
-        System.out.println("Nome Alterado: " + petAlterar.toString());
 
-    }
 
-    public void alterarIdadePet(Pet petAlterar) {
-        String idade = this.pet.verificacaoIdadeRegex();
-        String novoIdadeTxt = "5 - " + idade;
-        addInformacoesPetTxt(petAlterar, novoIdadeTxt);
-        petAlterar.setIdade(idade);
-        System.out.println("Idade Alterada: " + petAlterar.toString());
-    }
-
-    public void alterarRacaPet(Pet petAlterar) {
-        String raca = this.pet.verificacaoRacaRegex();
-        String novoRacaTxt = "7 - " + raca;
-        addInformacoesPetTxt(petAlterar, novoRacaTxt);
-        petAlterar.setRaca(raca);
-        System.out.println("Raça Alterada: " + petAlterar.toString());
-    }
-
-    public void alterarPesoPet(Pet petAlterar) {
-        String peso = this.pet.vereficacaoPesoRegex();
-        String novoPesoTxt = "6 - " + peso;
-        addInformacoesPetTxt(petAlterar, novoPesoTxt);
-        petAlterar.setPeso(peso);
-        System.out.println("Peso Alterado: " + petAlterar.toString());
-    }
-
-    public void alterarEnderecoPet(Pet petAlterar, Endereco endereco) {
-        String novoEnderecoTxt = "4 - " + endereco;
-        addInformacoesPetTxt(petAlterar, novoEnderecoTxt);
-        petAlterar.setEndereco(endereco);
-        System.out.println("Endereço Alterado: " + petAlterar.toString());
-    }
 
     private void removePetTxt(Pet pet) {
         File dir = new File("petsCadastrados");
@@ -388,7 +338,7 @@ public class AlteracoesPet {
             for (File filePet : arquivos) {
                 if (filePet.isFile() && filePet.getName().endsWith(".txt")) {
                     boolean arquivoEncontrado = false;
-                    try (FileReader fr = new FileReader(filePet)){
+                    try (FileReader fr = new FileReader(filePet)) {
                         BufferedReader br = new BufferedReader(fr);
 
                         String linhaNome = br.readLine();
@@ -471,6 +421,50 @@ public class AlteracoesPet {
             }
         }
     }
+
+
+
+    public void alterarNomePet(Pet petAlterar) {
+        String nome = this.pet.verificacaoNomeRegex();
+        String novoNomeTxt = "1 - " + nome;
+        addInformacoesPetTxt(petAlterar, novoNomeTxt);
+        petAlterar.setNome(nome);
+        System.out.println("Nome Alterado: " + petAlterar.toString());
+
+    }
+
+    public void alterarIdadePet(Pet petAlterar) {
+        String idade = this.pet.verificacaoIdadeRegex();
+        String novoIdadeTxt = "5 - " + idade;
+        addInformacoesPetTxt(petAlterar, novoIdadeTxt);
+        petAlterar.setIdade(idade);
+        System.out.println("Idade Alterada: " + petAlterar.toString());
+    }
+
+    public void alterarRacaPet(Pet petAlterar) {
+        String raca = this.pet.verificacaoRacaRegex();
+        String novoRacaTxt = "7 - " + raca;
+        addInformacoesPetTxt(petAlterar, novoRacaTxt);
+        petAlterar.setRaca(raca);
+        System.out.println("Raça Alterada: " + petAlterar.toString());
+    }
+
+    public void alterarPesoPet(Pet petAlterar) {
+        String peso = this.pet.vereficacaoPesoRegex();
+        String novoPesoTxt = "6 - " + peso;
+        addInformacoesPetTxt(petAlterar, novoPesoTxt);
+        petAlterar.setPeso(peso);
+        System.out.println("Peso Alterado: " + petAlterar.toString());
+    }
+
+    public void alterarEnderecoPet(Pet petAlterar, Endereco endereco) {
+        String novoEnderecoTxt = "4 - " + endereco;
+        addInformacoesPetTxt(petAlterar, novoEnderecoTxt);
+        petAlterar.setEndereco(endereco);
+        System.out.println("Endereço Alterado: " + petAlterar.toString());
+    }
+
+
 
     private List<Pet> consultaNome(List<Pet> listaAtual, String nome) {
         List<Pet> listaFiltrada = new ArrayList<>();
