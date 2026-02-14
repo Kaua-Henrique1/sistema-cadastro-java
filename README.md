@@ -3,10 +3,13 @@
 Um sistema de cadastro desenvolvido em Java que roda via terminal (CLI). O projeto realiza operações de **CRUD** (Cadastro, Consulta, Atualização e Remoção) de Pets.
 O foco principal é a **lógica de manipulação de arquivos .txt** (persistência manual), validação de dados com **Regex** e tratamento robusto de exceções.
 
+> O objetivo é treinar lógica de programação pura, por enquanto está sem dependência de bancos de dados ou frameworks.
+> Pretendo futuramente refatorar os arquivos.txt em PostgreSQL e com Spring Boot.  
+
+
 ## Referência e Desafio
 
 Este projeto foi desenvolvido como solução para o **Desafio de Cadastro**, proposto por **[Karilho](https://github.com/karilho/desafioCadastro/)**.
-O objetivo é treinar lógica de programação pura, sem dependência de bancos de dados ou frameworks.
 
 ## Funcionalidades
 
