@@ -1,16 +1,17 @@
-package devKaua.projeto.service;
+package devKaua.projeto;
 
-import devKaua.projeto.domain.AlteracoesPet;
+import devKaua.projeto.service.AlteracoesPet;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.InputMismatchException;
 import java.util.Scanner;;
 
 public class main {
     public static void main(String[] args) {
-        File formulario = new File("/home/jaua/IdeaProjects/sistema-cadastro--java/sistema-cadastro/src/devKaua/projeto/formulario/formulario.txt");
+        File formulario = new File("/home/jaua/IdeaProjects/sistema-cadastro--java/sistema-cadastro/formulario/formulario.txt");
         boolean sairTrue = true;
         AlteracoesPet sistema = new AlteracoesPet();
         while (sairTrue) {
@@ -23,14 +24,14 @@ public class main {
             System.out.println("6: Sair");
             System.out.println();
 
-            System.out.println("Escolha sua opção: (Digite apenas de 1 a 6)");
-            String opcao = scanner.nextLine();
             try {
-                int opcaoInt = Integer.parseInt(opcao);
-                if (opcaoInt < 1 || opcaoInt > 6) {
+                System.out.println("Escolha sua opção: (Digite apenas de 1 a 6)");
+                int opcao = scanner.nextInt();
+
+                if (opcao < 1 || opcao > 6) {
                     System.out.println("Informe um número entre 1 a 6.");
                 } else {
-                    switch (opcaoInt) {
+                    switch (opcao) {
                         case 1:
                             try (FileReader fileReader = new FileReader(formulario)) {
                                 BufferedReader br = new BufferedReader(fileReader);
@@ -41,16 +42,39 @@ public class main {
                             } catch (IOException e) {
                                 throw new RuntimeException(e);
                             }
-                            sistema.cadastroPetLista();
+                            try {
+                                sistema.cadastroPetLista();
+                            } catch (RuntimeException e) {
+                                System.out.println("Erro. Argumento Invalido.");
+                                System.out.println();
+                            }
                             break;
                         case 2:
-                            sistema.listarPetPorCriterio();
+                            try {
+                                sistema.listarPetPorCriterio();
+                            } catch (RuntimeException e) {
+                                System.out.println("Erro. Argumento Invalido.");
+                                scanner.nextLine();
+                                System.out.println();
+                            }
                             break;
                         case 3:
-                            sistema.alterarDadosPet();
+                            try {
+                                sistema.alterarDadosPet();
+                            } catch (RuntimeException e) {
+                                System.out.println("Erro. Argumento Invalido.");
+                                scanner.nextLine();
+                                System.out.println();
+                            }
                             break;
                         case 4:
-                            sistema.deletarPetLista();
+                            try {
+                                sistema.deletarPetLista();
+                            } catch (RuntimeException e) {
+                                System.out.println("Erro. Argumento Invalido.");
+                                scanner.nextLine();
+                                System.out.println();
+                            }
                             break;
                         case 5:
                             sistema.listagemPetLista();
@@ -61,7 +85,7 @@ public class main {
                     }
 
                 }
-            } catch (NumberFormatException e) {
+            } catch (RuntimeException e) {
                 System.out.println("Error Texto: Digite Apenas número.");
             }
 

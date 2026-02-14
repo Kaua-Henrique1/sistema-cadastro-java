@@ -5,7 +5,7 @@ public class Endereco {
     private String numero;
     private String cidade;
 
-    Endereco(String rua, String numero, String cidade) {
+    public Endereco(String rua, String numero, String cidade) {
         this.rua = rua;
         this.cidade = cidade;
         this.numero = numero;

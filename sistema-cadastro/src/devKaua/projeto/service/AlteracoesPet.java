@@ -1,4 +1,9 @@
-package devKaua.projeto.domain;
+package devKaua.projeto.service;
+
+import devKaua.projeto.domain.Endereco;
+import devKaua.projeto.domain.Pet;
+import devKaua.projeto.domain.Sexo;
+import devKaua.projeto.domain.TipoAnimal;
 
 import java.io.*;
 import java.time.LocalDateTime;
@@ -186,7 +191,7 @@ public class AlteracoesPet {
                 int consultaDesejada;
                 do {
                     System.out.println();
-                    System.out.println("Digite apenas de '1' a '6'.");
+                    System.out.println("Digite apenas de '1' a '5'.");
                     System.out.println("(1 = nome ou sobrenome/ 2 = idade/ 3 = Raça ): ");
                     System.out.println("(4 = Peso/ 5 = Endereco ): ");
                     consultaDesejada = this.scanner.nextInt();
@@ -464,8 +469,6 @@ public class AlteracoesPet {
         System.out.println("Endereço Alterado: " + petAlterar.toString());
     }
 
-
-
     private List<Pet> consultaNome(List<Pet> listaAtual, String nome) {
         List<Pet> listaFiltrada = new ArrayList<>();
         boolean encontrou = false;
@@ -556,22 +559,5 @@ public class AlteracoesPet {
             System.out.println("Nenhum pet encontrado nessa cidade.");
         }
         return listaFiltrada;
-    }
-
-
-    public List<Pet> getListaPet() {
-        return listaPet;
-    }
-
-    public void setListaPet(List<Pet> pet) {
-        this.listaPet = pet;
-    }
-
-    public Pet getPet() {
-        return pet;
-    }
-
-    public void setPet(Pet pet) {
-        this.pet = pet;
     }
 }
