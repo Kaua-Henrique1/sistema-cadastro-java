@@ -1,5 +1,8 @@
 package devKaua.projeto.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Endereco {
     private String rua;
     private String numero;
@@ -20,15 +23,24 @@ public class Endereco {
         return this.rua + ", " + this.numero + ", " + this.cidade;
     }
 
-    public String getRua() {
-        return rua;
+
+    public List<Pet> consultaEndereco(List<Pet> listaAtual, String cidade) {
+        List<Pet> listaFiltrada = new ArrayList<>();
+        boolean encontrou = false;
+        for (Pet pet : listaAtual) {
+            if (pet.getEndereco().Cidade().equalsIgnoreCase(cidade)) {
+                encontrou = true;
+                listaFiltrada.add(pet);
+                return listaFiltrada;
+            }
+        }
+        if (!encontrou) {
+            System.out.println("Nenhum pet encontrado nessa cidade.");
+        }
+        return listaFiltrada;
     }
 
-    public String getNumero() {
-        return numero;
-    }
-
-    public String getCidade() {
+    String Cidade() {
         return cidade;
     }
 }

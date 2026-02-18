@@ -6,10 +6,13 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.InputMismatchException;
 import java.util.Scanner;;
 
-public class main {
+public class GeradorDaONG {
+    // rodar interface do usasrio ui
+    // rodar sevice petService
+    // rodar persistencia de dados
+
     public static void main(String[] args) {
         File formulario = new File("/home/jaua/IdeaProjects/sistema-cadastro--java/sistema-cadastro/formulario/formulario.txt");
         boolean sairTrue = true;
