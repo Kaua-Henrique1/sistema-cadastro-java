@@ -1,18 +1,20 @@
-package devKaua.projeto.service;
+package devKaua.projeto.application;
 
-import devKaua.projeto.InterfaceDeUsario;
 import devKaua.projeto.domain.Pet;
+
+import java.util.List;
 import java.util.Scanner;
 
 public class InterfaceUsarioCLI implements InterfaceDeUsario {
     Scanner scanner = new Scanner(System.in);
+
     @Override
     public int selecionarOpcao() {
         int opcao;
         do {
             System.out.println("Escolha sua opção: (Digite apenas de 1 a 6)");
             opcao = scanner.nextInt();
-
+            scanner.nextLine();
         } while (opcao < 1 || opcao > 6);
         return opcao;
     }
@@ -59,7 +61,7 @@ public class InterfaceUsarioCLI implements InterfaceDeUsario {
     @Override
     public String solicitarIdade() {
         System.out.print("Idade do Pet: ");
-        return  this.scanner.nextLine();
+        return this.scanner.nextLine();
     }
 
     @Override
@@ -80,12 +82,11 @@ public class InterfaceUsarioCLI implements InterfaceDeUsario {
         System.out.print("Cidade: ");
         String cidade = this.scanner.nextLine();
 
-        String[] strEnderecoSemVerificado = {rua, numero, cidade};
-        return strEnderecoSemVerificado;
+        return new String[]{rua, numero, cidade};
     }
 
     @Override
-    public int solicitarConfirmacao(String mensagem) {
+    public int solicitarConfirmacaoSimNao() {
         System.out.println("Deseja adicionar mais um critério (1= Sim/2= Não): ");
         int adicionarConsulta = this.scanner.nextInt();
         this.scanner.nextLine();
@@ -93,8 +94,8 @@ public class InterfaceUsarioCLI implements InterfaceDeUsario {
     }
 
     @Override
-    public int numeroPetList() {
-        System.out.println("Informe o número do pet que deseja deletar: ");
+    public int numeroPetListFiltrada() {
+        System.out.println("Informe o número do pet para essa ação: ");
         int numeroPet = this.scanner.nextInt();
         this.scanner.nextLine();
         return numeroPet;
@@ -113,11 +114,11 @@ public class InterfaceUsarioCLI implements InterfaceDeUsario {
     }
 
     @Override
-    public int solicitarOpcaoEdicao() {
-        System.out.println();
-        System.out.println("Digite apenas de '1' a '5'.");
-        System.out.println("(1 = nome ou sobrenome/ 2 = idade/ 3 = Raça ): ");
-        System.out.println("(4 = Peso/ 5 = Endereco ): ");
+    public int solicitarOpcaoAlterar() {
+        System.out.println("---------------------------");
+        System.out.println("Digite apenas de '1' a '4'.");
+        System.out.println("(1 = nome ou sobrenome/ 2 = idade): ");
+        System.out.println("(3 = Raça / 4 = Peso): ");
         int consultaDesejada = this.scanner.nextInt();
         this.scanner.nextLine();
         return consultaDesejada;
@@ -130,7 +131,7 @@ public class InterfaceUsarioCLI implements InterfaceDeUsario {
 
     @Override
     public void exibirMensagemErrorConsulta() {
-        System.out.println("Nenhum pet encontrado com esse. ");
+        System.out.println("Nenhum pet encontrado com esse dado. ");
     }
 
     @Override
@@ -149,4 +150,45 @@ public class InterfaceUsarioCLI implements InterfaceDeUsario {
         System.out.print("Informe o dado para busca: ");
         return this.scanner.nextLine();
     }
+
+    @Override
+    public void exibirListaPets(List<Pet> listaAtual) {
+        StringBuilder builder = new StringBuilder();
+        int contador = 0;
+        System.out.println("Pets Cadastrados com base na sua consulta: ");
+        for (Pet pet : listaAtual) {
+            builder.append(++contador + " - " + pet.toString());
+        }
+    }
+
+    @Override
+    public void exibirPet(Pet pet) {
+        System.out.println(pet.toString());
+    }
+
+    @Override
+    public void errorExibir(String mensagem) {
+        System.out.println("ERRO DE VALIDAÇÃO:");
+        System.out.println(mensagem);
+    }
+
+    @Override
+    public void erroSalvarArquivoPet() {
+        System.out.println("Erro ao tentar salvar o arquivo.");
+    }
+
+    @Override
+    public void erroSalvarObjPet() {
+        System.out.println("Erro ao tentar cadastrar novo Pet.");
+    }
+
+    @Override
+    public int consultaCachorroOuGato() {
+        System.out.println("Digite apenas '1' e '2'.");
+        System.out.println("(1 = Consulta Cachorro/ 2 = Consulta por Gato: ");
+        int respostaTipoAnimal = this.scanner.nextInt();
+        this.scanner.nextLine();
+        return respostaTipoAnimal;
+    }
+
 }

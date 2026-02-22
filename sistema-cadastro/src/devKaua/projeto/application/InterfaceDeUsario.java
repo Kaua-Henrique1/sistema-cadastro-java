@@ -1,6 +1,8 @@
-package devKaua.projeto;
+package devKaua.projeto.application;
 
 import devKaua.projeto.domain.Pet;
+
+import java.util.List;
 
 public interface InterfaceDeUsario {
     int selecionarOpcao();
@@ -14,20 +16,31 @@ public interface InterfaceDeUsario {
     String solicitarPeso();
     String[] solicitarEndereco();
 
-    int solicitarConfirmacao(String mensagem);
+    int solicitarConfirmacaoSimNao();
 
-    int numeroPetList();
+    int numeroPetListFiltrada();
     String confirmacaoDeletarPet(Pet pet);
     void mensagemDeletarPet();
 
-    int solicitarOpcaoEdicao();
+    int solicitarOpcaoAlterar();
 
-    void exibirMensagemAlteracaoConcluida(); // "Informe dado do Pet: "
+    void exibirMensagemAlteracaoConcluida();
 
     void exibirMensagemErrorConsulta();
+
+    void exibirPet(Pet pet);
+
+    void errorExibir(String mensagem);
 
     int solicitarOpcaoFiltro();
 
     String solicitarTextoBusca();
 
+    void exibirListaPets(List<Pet> listaAtual);
+
+    void erroSalvarArquivoPet();
+
+    void erroSalvarObjPet();
+
+    int consultaCachorroOuGato();
 }

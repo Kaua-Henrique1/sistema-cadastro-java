@@ -1,18 +1,19 @@
-package devKaua.projeto.service;
+package devKaua.projeto.application;
 
-import devKaua.projeto.PersistenceUnit;
 import devKaua.projeto.domain.*;
 
 import java.io.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 public class PersistenciaDadosTXT implements PersistenceUnit {
-    private List<Pet> listaPet = new ArrayList<>();
+    private final List<Pet> listaPet = new ArrayList<>();
     public static final String SEM_DADOS = "NÃO INFORMADO";
 
     @Override
-    public boolean salvar() {
+    public boolean carregarDados() {
         File dir = new File("petsCadastrados");
         File[] arquivos = dir.listFiles();
 
@@ -20,10 +21,14 @@ public class PersistenciaDadosTXT implements PersistenceUnit {
             return false;
         }
 
+        Long maiorIdEncontrado = 0L;
         for (File filePet : arquivos) {
             if (filePet.isFile() && filePet.getName().endsWith(".txt")) {
                 try (FileReader fr = new FileReader(filePet)) {
                     BufferedReader br = new BufferedReader(fr);
+
+                    String linhaID = br.readLine();
+                    Long idPet = Long.parseLong(linhaID.split(" - ")[1]);
 
                     String linhaNome = br.readLine();
                     String nomePet = linhaNome.split(" - ")[1];
@@ -46,7 +51,10 @@ public class PersistenciaDadosTXT implements PersistenceUnit {
                     String cidade = partesEndereco[2];
 
                     if (partesEndereco.length > 1) {
-                        numero = partesEndereco[1];
+                        numero = partesEndereco[1].trim();
+                        if (numero.isEmpty()) {
+                            numero = SEM_DADOS;
+                        }
                     } else {
                         numero = SEM_DADOS;
                     }
@@ -62,14 +70,63 @@ public class PersistenciaDadosTXT implements PersistenceUnit {
                     String linhaRaca = br.readLine();
                     String racaPet = linhaRaca.split(" - ")[1];
 
-                    AtributosPet atributosPet = new AtributosPet(sexoPet, tipoPet, idadePet, pesoPet, racaPet);
-                    Pet novoPet = new Pet(nomePet, enderecoPet, atributosPet);
+                    if (idPet > maiorIdEncontrado) {
+                        maiorIdEncontrado = idPet;
+                    }
+
+                    Pet novoPet = new Pet(idPet , nomePet, enderecoPet, sexoPet, tipoPet, idadePet, pesoPet, racaPet);
 
                     this.listaPet.add(novoPet);
                 } catch (Exception e) {
                     return false;
                 }
             }
+        }
+        Pet.atualizarGerador(maiorIdEncontrado);
+        return true;
+    }
+
+    @Override
+    public boolean salvar(Pet pet, String enderecoPetStr) {
+        DateTimeFormatter formatada = DateTimeFormatter.ofPattern("yyyyMMdd");
+        DateTimeFormatter formatadaMin = DateTimeFormatter.ofPattern("HHmm");
+        LocalDateTime agora = LocalDateTime.now();
+        String dataFormatada = agora.format(formatada);
+        String dataFormatadaMin = agora.format(formatadaMin);
+
+        String nomePetFile = pet.getNome().toUpperCase().trim().replace(" ", "");
+        String nomeFile = dataFormatada + "T" + dataFormatadaMin + "-" + nomePetFile + pet.getID();
+
+        File fileDir = new File("petsCadastrados");
+
+        if (!fileDir.exists()) {
+            fileDir.mkdir();
+        }
+
+        File filePet = new File(fileDir, nomeFile + ".txt");
+
+        try (FileWriter fw = new FileWriter(filePet)) {
+            BufferedWriter bw = new BufferedWriter(fw);
+            bw.write("ID - " + pet.getID());
+            bw.newLine();
+            bw.write("1 - " + pet.getNome());
+            bw.newLine();
+            bw.write("2 - " + pet.getTipoAnimal());
+            bw.newLine();
+            bw.write("3 - " + pet.getSexo());
+            bw.newLine();
+            bw.write("4 - " + enderecoPetStr);
+            bw.newLine();
+            bw.write("5 - " + pet.getIdade() + " anos");
+            bw.newLine();
+            bw.write("6 - " + pet.getPeso() + "kg");
+            bw.newLine();
+            bw.write("7 - " + pet.getRaca());
+            bw.flush();
+
+            this.listaPet.add(pet);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
         return true;
     }
@@ -85,21 +142,23 @@ public class PersistenciaDadosTXT implements PersistenceUnit {
 
         for (File filePet : arquivos) {
             if (filePet.isFile() && filePet.getName().endsWith(".txt")) {
-                String linhaNome = "";
-                String linhaTipo = "";
-                String linhaSexo = "";
-                String linhaEndereco = "";
-                String linhaIdade = "";
-                String linhaPeso = "";
-                String linhaRaca = "";
+                String linhaID;
+                String linhaNome;
+                String linhaTipo;
+                String linhaSexo;
+                String linhaEndereco;
+                String linhaIdade;
+                String linhaPeso;
+                String linhaRaca;
                 try (FileReader fr = new FileReader(filePet)) {
                     BufferedReader br = new BufferedReader(fr);
 
-                    linhaNome = br.readLine();
-                    if (!linhaNome.contains(pet.getNome())) {
+                    linhaID = br.readLine();
+                    if (!linhaID.equals("ID - " + pet.getID())) {
                         continue;
                     }
 
+                    linhaNome = br.readLine();
                     linhaTipo = br.readLine();
                     linhaSexo = br.readLine();
                     linhaEndereco = br.readLine();
@@ -111,7 +170,7 @@ public class PersistenciaDadosTXT implements PersistenceUnit {
                     throw new RuntimeException(e);
                 }
 
-                String[] linhasArquivo = {linhaNome, linhaTipo, linhaSexo, linhaEndereco, linhaIdade, linhaPeso, linhaRaca};
+                String[] linhasArquivo = {linhaID, linhaNome, linhaTipo, linhaSexo, linhaEndereco, linhaIdade, linhaPeso, linhaRaca};
                 try (FileWriter fw = new FileWriter(filePet)) {
                     BufferedWriter bw = new BufferedWriter(fw);
 
@@ -131,7 +190,7 @@ public class PersistenciaDadosTXT implements PersistenceUnit {
                     return true;
 
                 } catch (IOException e) {
-                    System.err.println("Erro ao atualizar arquivo " + filePet.getName());
+                    throw new RuntimeException(e);
                 }
             }
         }
@@ -149,20 +208,25 @@ public class PersistenciaDadosTXT implements PersistenceUnit {
 
         for (File filePet : arquivos) {
             if (filePet.isFile() && filePet.getName().endsWith(".txt")) {
+                boolean arquivoEncontrado = false;
                 try (FileReader fr = new FileReader(filePet)) {
                     BufferedReader br = new BufferedReader(fr);
 
-                    String linhaNome = br.readLine();
-                    if (linhaNome != null && linhaNome.contains(" - ")) {
-                        String nomeNoArquivo = linhaNome.split(" - ")[1];
+                    String linhaID = br.readLine();
+                    if (linhaID != null && linhaID.startsWith("ID - ")) {
+                        String idNoArquivo = linhaID.split(" - ")[1];
 
-                        if (nomeNoArquivo.equals(pet.getNome())) {
+                        if (idNoArquivo.equals(String.valueOf(pet.getID()))) {
                             br.close();
-                            return filePet.delete();
+                            arquivoEncontrado = true;
                         }
                     }
                 } catch (IOException e) {
-                    System.err.println("Erro ao ler arquivo: " + filePet.getName());
+                    throw new RuntimeException(e);
+                }
+                if (arquivoEncontrado) {
+                    this.listaPet.remove(pet);
+                    return filePet.delete();
                 }
             }
         }

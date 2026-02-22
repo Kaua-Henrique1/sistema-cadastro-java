@@ -1,6 +1,8 @@
-package devKaua.projeto;
+package devKaua.projeto.presentation;
 
-import devKaua.projeto.service.AlteracoesPet;
+import devKaua.projeto.application.InterfaceUsarioCLI;
+import devKaua.projeto.application.PersistenciaDadosTXT;
+import devKaua.projeto.application.PetServiceClass;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -9,14 +11,14 @@ import java.io.IOException;
 import java.util.Scanner;;
 
 public class GeradorDaONG {
-    // rodar interface do usasrio ui
-    // rodar sevice petService
-    // rodar persistencia de dados
-
     public static void main(String[] args) {
+        var ui = new InterfaceUsarioCLI();
+        var repo = new PetServiceClass();
+        var a = new PersistenciaDadosTXT();
+
         File formulario = new File("/home/jaua/IdeaProjects/sistema-cadastro--java/sistema-cadastro/formulario/formulario.txt");
         boolean sairTrue = true;
-        AlteracoesPet sistema = new AlteracoesPet();
+        PetServiceClass sistema = new PetServiceClass();
         while (sairTrue) {
             Scanner scanner = new Scanner(System.in);
             System.out.println("1: Cadastrar um novo pet");
@@ -46,7 +48,7 @@ public class GeradorDaONG {
                                 throw new RuntimeException(e);
                             }
                             try {
-                                sistema.cadastroPetLista();
+                                sistema.cadastrar();
                             } catch (RuntimeException e) {
                                 System.out.println("Erro. Argumento Invalido.");
                                 System.out.println();
@@ -54,7 +56,7 @@ public class GeradorDaONG {
                             break;
                         case 2:
                             try {
-                                sistema.listarPetPorCriterio();
+                                sistema.listarPetsPorCriterio();
                             } catch (RuntimeException e) {
                                 System.out.println("Erro. Argumento Invalido.");
                                 scanner.nextLine();
@@ -63,7 +65,7 @@ public class GeradorDaONG {
                             break;
                         case 3:
                             try {
-                                sistema.alterarDadosPet();
+                                sistema.alterar();
                             } catch (RuntimeException e) {
                                 System.out.println("Erro. Argumento Invalido.");
                                 scanner.nextLine();
@@ -72,7 +74,7 @@ public class GeradorDaONG {
                             break;
                         case 4:
                             try {
-                                sistema.deletarPetLista();
+                                sistema.remover();
                             } catch (RuntimeException e) {
                                 System.out.println("Erro. Argumento Invalido.");
                                 scanner.nextLine();
@@ -80,7 +82,7 @@ public class GeradorDaONG {
                             }
                             break;
                         case 5:
-                            sistema.listagemPetLista();
+                            sistema.listarPetsCompleta();
                             break;
                         case 6:
                             sairTrue = false;
