@@ -7,11 +7,23 @@ import java.util.List;
 
 public class PetServiceClass implements PetService {
     private AlteracoesPet alteracoesPet;
-    private final List<Pet> listaPet = new ArrayList<>();
-    private InterfaceUsarioCLI interfaceUsarioCLI;
-    private PersistenciaDadosTXT persistenciaDadosTXT;
+    private InterfaceUsarioCLI ui;
+    private PersistenciaDadosTXT persistencia;
     public static final String SEM_DADOS = "NÃO INFORMADO";
 
+    public PetServiceClass(InterfaceUsarioCLI ui, PersistenciaDadosTXT persistenciaDadosTXT) {
+        this.ui = ui;
+        this.persistencia = persistenciaDadosTXT;
+        this.alteracoesPet = new AlteracoesPet();
+    }
+
+    private PersistenciaDadosTXT getPersistencia() {
+        return persistencia;
+    }
+
+    private InterfaceUsarioCLI getUi() {
+        return ui;
+    }
 
     @Override
     public void cadastrar() {
@@ -26,23 +38,23 @@ public class PetServiceClass implements PetService {
         Sexo sexoPet = null;
         while (atributos == null) {
             try {
-                int tipoPetInt = interfaceUsarioCLI.solicitarTipo();
+                int tipoPetInt = getUi().solicitarTipo();
                 tipoPet = TipoAnimal.values()[tipoPetInt - 1];
 
-                int sexoPetInt = interfaceUsarioCLI.solicitarSexo();
+                int sexoPetInt = getUi().solicitarSexo();
                 sexoPet = Sexo.values()[sexoPetInt - 1];
 
-                String[] enderecoPetU = interfaceUsarioCLI.solicitarEndereco();
+                String[] enderecoPetU = getUi().solicitarEndereco();
                 enderecoPet = new Endereco(enderecoPetU[0], enderecoPetU[1], enderecoPetU[2]);
 
-                nomePet = interfaceUsarioCLI.solicitarNome();
-                racaPet = interfaceUsarioCLI.solicitarRaca();
-                idadePet = interfaceUsarioCLI.solicitarIdade();
-                pesoPet = interfaceUsarioCLI.solicitarPeso();
+                nomePet = getUi().solicitarNome();
+                racaPet = getUi().solicitarRaca();
+                idadePet = getUi().solicitarIdade();
+                pesoPet = getUi().solicitarPeso();
 
                 atributos = new Pet(null, nomePet,enderecoPet,sexoPet,tipoPet,idadePet,pesoPet,racaPet);
             } catch (IllegalArgumentException e) {
-                interfaceUsarioCLI.erroSalvarObjPet();
+                getUi().erroSalvarObjPet();
             }
         }
         if (nomePet.isEmpty()) {
@@ -61,13 +73,13 @@ public class PetServiceClass implements PetService {
         Pet novoPet = new Pet(null,nomePet,enderecoPet,sexoPet,tipoPet,idadePet,pesoPet,racaPet);
         String enderecoPetStr = enderecoPet.toFormatado();
 
-        persistenciaDadosTXT.salvar(novoPet, enderecoPetStr);
+        getPersistencia().salvar(novoPet, enderecoPetStr);
     }
 
     @Override
     public void alterar() {
         List<Pet> listaParaAlteraPet = listarPetsPorCriterio();
-        int numeroPet = interfaceUsarioCLI.numeroPetListFiltrada();
+        int numeroPet = getUi().numeroPetListFiltrada();
 
         int contador = 0;
         for (Pet pets : listaParaAlteraPet) {
@@ -75,7 +87,7 @@ public class PetServiceClass implements PetService {
             if (numeroPet == contador) {
                 int consultaDesejada;
                 do {
-                    consultaDesejada = this.interfaceUsarioCLI.solicitarOpcaoAlterar();
+                    consultaDesejada = getUi().solicitarOpcaoAlterar();
                 } while (consultaDesejada < 1 || consultaDesejada > 4);
 
                 switch (consultaDesejada) {
@@ -83,20 +95,20 @@ public class PetServiceClass implements PetService {
                         boolean nomeValido = false;
                         while (!nomeValido) {
                             try {
-                                String nomeNovo = interfaceUsarioCLI.solicitarNome();
+                                String nomeNovo = getUi().solicitarNome();
 
                                 pets.setNome(nomeNovo);
                                 String novoNomeTxt = "1 - " + nomeNovo;
-                                boolean isTrue = this.persistenciaDadosTXT.atualizar(pets, novoNomeTxt);
+                                boolean isTrue = getPersistencia().atualizar(pets, novoNomeTxt);
 
                                 if (isTrue) {
-                                    interfaceUsarioCLI.exibirPet(pets);
-                                    interfaceUsarioCLI.exibirMensagemAlteracaoConcluida();
+                                    getUi().exibirPet(pets);
+                                    getUi().exibirMensagemAlteracaoConcluida();
                                 }
                                 nomeValido = true;
 
                             } catch (IllegalArgumentException e) {
-                                interfaceUsarioCLI.errorExibir(e.getMessage());
+                                getUi().errorExibir(e.getMessage());
                             }
                         }
                         break;
@@ -104,20 +116,20 @@ public class PetServiceClass implements PetService {
                         boolean idadeValido = false;
                         while (!idadeValido) {
                             try {
-                                String idadeNovo = interfaceUsarioCLI.solicitarIdade();
+                                String idadeNovo = getUi().solicitarIdade();
 
                                 pets.setIdade(idadeNovo);
                                 String novoIdadeTxt = "5 - " + idadeNovo + " anos";
-                                boolean isTrue = this.persistenciaDadosTXT.atualizar(pets, novoIdadeTxt);
+                                boolean isTrue = getPersistencia().atualizar(pets, novoIdadeTxt);
 
                                 if (isTrue) {
-                                    interfaceUsarioCLI.exibirPet(pets);
-                                    interfaceUsarioCLI.exibirMensagemAlteracaoConcluida();
+                                    getUi().exibirPet(pets);
+                                    getUi().exibirMensagemAlteracaoConcluida();
                                 }
                                 idadeValido = true;
 
                             } catch (IllegalArgumentException e) {
-                                interfaceUsarioCLI.errorExibir(e.getMessage());
+                                getUi().errorExibir(e.getMessage());
                             }
                         }
                         break;
@@ -125,20 +137,20 @@ public class PetServiceClass implements PetService {
                         boolean racaValido = false;
                         while (!racaValido) {
                             try {
-                                String racaNovo = interfaceUsarioCLI.solicitarRaca();
+                                String racaNovo = getUi().solicitarRaca();
 
                                 pets.setRaca(racaNovo);
                                 String novoRacaTxt = "7 - " + racaNovo;
-                                boolean isTrue = this.persistenciaDadosTXT.atualizar(pets, novoRacaTxt);
+                                boolean isTrue = getPersistencia().atualizar(pets, novoRacaTxt);
 
                                 if (isTrue) {
-                                    interfaceUsarioCLI.exibirPet(pets);
-                                    interfaceUsarioCLI.exibirMensagemAlteracaoConcluida();
+                                    getUi().exibirPet(pets);
+                                    getUi().exibirMensagemAlteracaoConcluida();
                                 }
                                 racaValido = true;
 
                             } catch (IllegalArgumentException e) {
-                                interfaceUsarioCLI.errorExibir(e.getMessage());
+                                getUi().errorExibir(e.getMessage());
                             }
                         }
                         break;
@@ -146,20 +158,20 @@ public class PetServiceClass implements PetService {
                         boolean pesoValido = false;
                         while (!pesoValido) {
                             try {
-                                String pesoNovo = interfaceUsarioCLI.solicitarPeso();
+                                String pesoNovo = getUi().solicitarPeso();
 
                                 pets.setPeso(pesoNovo);
                                 String novoPesoTxt = "6 - " + pesoNovo+ "kg";
-                                boolean isTrue = this.persistenciaDadosTXT.atualizar(pets, novoPesoTxt);
+                                boolean isTrue = getPersistencia().atualizar(pets, novoPesoTxt);
 
                                 if (isTrue) {
-                                    interfaceUsarioCLI.exibirPet(pets);
-                                    interfaceUsarioCLI.exibirMensagemAlteracaoConcluida();
+                                    getUi().exibirPet(pets);
+                                    getUi().exibirMensagemAlteracaoConcluida();
                                 }
                                 pesoValido = true;
 
                             } catch (IllegalArgumentException e) {
-                                interfaceUsarioCLI.errorExibir(e.getMessage());
+                                getUi().errorExibir(e.getMessage());
                             }
                         }
                         break;
@@ -171,7 +183,7 @@ public class PetServiceClass implements PetService {
     @Override
     public void remover() {
         List<Pet> listaParaDeletarPet = listarPetsPorCriterio();
-        int numeroPet = interfaceUsarioCLI.numeroPetListFiltrada();
+        int numeroPet = getUi().numeroPetListFiltrada();
 
         int contador = 0;
         String respostaDeletarPet;
@@ -179,13 +191,13 @@ public class PetServiceClass implements PetService {
             contador++;
             if (numeroPet == contador) {
                 do {
-                    respostaDeletarPet = this.interfaceUsarioCLI.confirmacaoDeletarPet(pet);
+                    respostaDeletarPet = getUi().confirmacaoDeletarPet(pet);
                 } while (!respostaDeletarPet.equalsIgnoreCase("SIM") && !respostaDeletarPet.equalsIgnoreCase("NÃO"));
 
                 if (respostaDeletarPet.equalsIgnoreCase("SIM")) {
-                    this.persistenciaDadosTXT.deletar(pet);
-                    this.listaPet.remove(pet);
-                    this.interfaceUsarioCLI.mensagemDeletarPet();
+                    getPersistencia().deletar(pet);
+                    getPersistencia().getListaPet().remove(pet);
+                    getUi().mensagemDeletarPet();
                 } else {
                     return;
                 }
@@ -201,10 +213,10 @@ public class PetServiceClass implements PetService {
         List<Pet> listaFiltrada = new ArrayList<>();
         int respostaTipoAnimal;
         do {
-            respostaTipoAnimal = interfaceUsarioCLI.consultaCachorroOuGato();
+            respostaTipoAnimal = getUi().consultaCachorroOuGato();
         } while (respostaTipoAnimal < 1 || respostaTipoAnimal > 2);
 
-        for (Pet petOpcoes : this.listaPet) {
+        for (Pet petOpcoes : getPersistencia().getListaPet()) {
             if (respostaTipoAnimal == 1 && petOpcoes.getTipoAnimal() == TipoAnimal.CACHORRO) {
                 listaFiltrada.add(petOpcoes);
             } else if (respostaTipoAnimal == 2 && petOpcoes.getTipoAnimal() == TipoAnimal.GATO) {
@@ -213,28 +225,28 @@ public class PetServiceClass implements PetService {
         }
 
         if (listaFiltrada.isEmpty()) {
-            interfaceUsarioCLI.exibirMensagemErrorConsulta();
+            getUi().exibirMensagemErrorConsulta();
             return listaFiltrada;
         }
-        interfaceUsarioCLI.exibirListaPets(listaFiltrada);
+        getUi().exibirListaPets(listaFiltrada);
 
 
         do {
-            consultaDesejadaInterface = interfaceUsarioCLI.solicitarOpcaoFiltro();
+            consultaDesejadaInterface = getUi().solicitarOpcaoFiltro();
         } while (consultaDesejadaInterface < 1 || consultaDesejadaInterface > 6);
-        consultaInterface = interfaceUsarioCLI.solicitarTextoBusca();
+        consultaInterface = getUi().solicitarTextoBusca();
 
         List<Pet> listFiltrada2 = alteracoesPet.consultaPet(listaFiltrada, consultaDesejadaInterface, consultaInterface);
 
         if (listFiltrada2.isEmpty()) {
-            interfaceUsarioCLI.exibirMensagemErrorConsulta();
+            getUi().exibirMensagemErrorConsulta();
             return listaFiltrada;
         }
-        interfaceUsarioCLI.exibirListaPets(listFiltrada2);
+        getUi().exibirListaPets(listFiltrada2);
 
         int adicionarConsulta;
         do {
-            adicionarConsulta = interfaceUsarioCLI.solicitarConfirmacaoSimNao();
+            adicionarConsulta = getUi().solicitarConfirmacaoSimNao();
         } while (adicionarConsulta < 1 || adicionarConsulta > 2);
 
         if (adicionarConsulta != 1) {
@@ -242,23 +254,22 @@ public class PetServiceClass implements PetService {
         }
 
         do {
-            consultaDesejadaInterface = interfaceUsarioCLI.solicitarOpcaoFiltro();
+            consultaDesejadaInterface = getUi().solicitarOpcaoFiltro();
         } while (consultaDesejadaInterface < 1 || consultaDesejadaInterface > 6);
-        consultaInterface = interfaceUsarioCLI.solicitarTextoBusca();
+        consultaInterface = getUi().solicitarTextoBusca();
 
         List<Pet> listFiltrada3 = alteracoesPet.consultaPet(listFiltrada2, consultaDesejadaInterface, consultaInterface);
 
         if (listFiltrada3.isEmpty()) {
-            interfaceUsarioCLI.exibirMensagemErrorConsulta();
+            getUi().exibirMensagemErrorConsulta();
             return listaFiltrada;
         }
-        interfaceUsarioCLI.exibirListaPets(listFiltrada3);
+        getUi().exibirListaPets(listFiltrada3);
         return listFiltrada3;
     }
 
     @Override
     public void listarPetsCompleta() {
-        interfaceUsarioCLI.exibirListaPets(this.listaPet);
+        getUi().exibirListaPets(getPersistencia().getListaPet());
     }
-
 }

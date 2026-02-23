@@ -6,14 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AlteracoesPet {
-    private final Pet pet;
-    private PersistenciaDadosTXT persistenciaDadosTXT;
-
-    public AlteracoesPet() {
-        this.pet = new Pet();
-        this.persistenciaDadosTXT.carregarDados();
-    }
-
     private List<Pet> consultaNome(List<Pet> listaAtual, String nome) {
         List<Pet> listaFiltrada = new ArrayList<>();
         for (Pet pet : listaAtual) {

@@ -2,6 +2,10 @@ package devKaua.projeto.application;
 
 import devKaua.projeto.domain.Pet;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -140,6 +144,7 @@ public class InterfaceUsarioCLI implements InterfaceDeUsario {
         System.out.println("Digite apenas de '1' a '6'.");
         System.out.println("(1 = nome ou sobrenome/ 2 = idade/ 3 = Raça )");
         System.out.println("(4 = Peso/ 5 = Sexo/ 6 = Cidade )");
+        System.out.println("---------------------------");
         int opcao = this.scanner.nextInt();
         this.scanner.nextLine();
         return opcao;
@@ -191,4 +196,16 @@ public class InterfaceUsarioCLI implements InterfaceDeUsario {
         return respostaTipoAnimal;
     }
 
+    public void leituraFormulario() {
+        File formulario = new File("sistema-cadastro/formulario/formulario.txt");
+        try (FileReader fileReader = new FileReader(formulario)) {
+            BufferedReader br = new BufferedReader(fileReader);
+            String linha;
+            while ((linha = br.readLine()) != null) {
+                System.out.println(linha);
+            }
+        } catch (IOException e) {
+            errorExibir(e.getMessage());
+        }
+    }
 }

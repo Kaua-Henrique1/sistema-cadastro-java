@@ -9,12 +9,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PersistenciaDadosTXT implements PersistenceUnit {
+    private final String diretorioCaminho;
     private final List<Pet> listaPet = new ArrayList<>();
     public static final String SEM_DADOS = "NÃO INFORMADO";
 
+
+    public PersistenciaDadosTXT(String diretorioCaminho) {
+        this.diretorioCaminho = diretorioCaminho;
+        File dir = new File(diretorioCaminho);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+    }
+
     @Override
     public boolean carregarDados() {
-        File dir = new File("petsCadastrados");
+        // nao consegue ler a maioria pois so tem dois pet que foi criado com base no ID.
+        // mas meu metodo deveria mostrar pelo menos esses 2 PETS.
+        File dir = new File(getDiretorioCaminho());
         File[] arquivos = dir.listFiles();
 
         if (arquivos == null) {
@@ -27,7 +39,12 @@ public class PersistenciaDadosTXT implements PersistenceUnit {
                 try (FileReader fr = new FileReader(filePet)) {
                     BufferedReader br = new BufferedReader(fr);
 
+                    // teste para verificar quais nao consegue ler
                     String linhaID = br.readLine();
+                    if (linhaID == null || !linhaID.startsWith("ID - ")) {
+                        System.out.println("Pulando arquivo antigo ou inválido: " + filePet.getName());
+                        continue;
+                    }
                     Long idPet = Long.parseLong(linhaID.split(" - ")[1]);
 
                     String linhaNome = br.readLine();
@@ -78,7 +95,7 @@ public class PersistenciaDadosTXT implements PersistenceUnit {
 
                     this.listaPet.add(novoPet);
                 } catch (Exception e) {
-                    return false;
+                    e.getMessage();
                 }
             }
         }
@@ -97,7 +114,7 @@ public class PersistenciaDadosTXT implements PersistenceUnit {
         String nomePetFile = pet.getNome().toUpperCase().trim().replace(" ", "");
         String nomeFile = dataFormatada + "T" + dataFormatadaMin + "-" + nomePetFile + pet.getID();
 
-        File fileDir = new File("petsCadastrados");
+        File fileDir = new File(getDiretorioCaminho());
 
         if (!fileDir.exists()) {
             fileDir.mkdir();
@@ -133,7 +150,7 @@ public class PersistenciaDadosTXT implements PersistenceUnit {
 
     @Override
     public boolean atualizar(Pet pet, String linhaNova) {
-        File dir = new File("petsCadastrados");
+        File dir = new File(getDiretorioCaminho());
         File[] arquivos = dir.listFiles();
 
         if (arquivos == null) {
@@ -199,7 +216,7 @@ public class PersistenciaDadosTXT implements PersistenceUnit {
 
     @Override
     public boolean deletar(Pet pet) {
-        File dir = new File("petsCadastrados");
+        File dir = new File(getDiretorioCaminho());
         File[] arquivos = dir.listFiles();
 
         if (arquivos == null) {
@@ -231,5 +248,13 @@ public class PersistenciaDadosTXT implements PersistenceUnit {
             }
         }
         return false;
+    }
+
+    private String getDiretorioCaminho() {
+        return diretorioCaminho;
+    }
+
+    public List<Pet> getListaPet() {
+        return listaPet;
     }
 }

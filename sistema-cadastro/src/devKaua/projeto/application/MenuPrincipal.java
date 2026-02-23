@@ -1,67 +1,64 @@
 package devKaua.projeto.application;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-
 public class MenuPrincipal {
+    private final InterfaceUsarioCLI ui;
+    private final PetService service;
 
-    private InterfaceUsarioCLI interfaceUsarioCLI;
+    public MenuPrincipal(InterfaceUsarioCLI ui, PetServiceClass service) {
+        this.ui = ui;
+        this.service = service;
+    }
+
     public void run() {
-        interfaceUsarioCLI.printMenuPrincipal();
-        int opcao = interfaceUsarioCLI.selecionarOpcao();
-
-        switch (opcao) {
-            case 1:
-                try (FileReader fileReader = new FileReader(formulario)) {
-                    BufferedReader br = new BufferedReader(fileReader);
-                    String linha;
-                    while ((linha = br.readLine()) != null) {
-                        System.out.println(linha);
+        boolean sairTrue = true;
+        while (sairTrue) {
+            getUi().printMenuPrincipal();
+            int opcao = getUi().selecionarOpcao();
+            switch (opcao) {
+                case 1:
+                    getUi().leituraFormulario();
+                    try {
+                        getService().cadastrar();
+                    } catch (RuntimeException e) {
+                        getUi().errorExibir(e.getMessage());
                     }
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                try {
-                    sistema.cadastrar();
-                } catch (RuntimeException e) {
-                    System.out.println("Erro. Argumento Invalido.");
-                    System.out.println();
-                }
-                break;
-            case 2:
-                try {
-                    sistema.listarPetsPorCriterio();
-                } catch (RuntimeException e) {
-                    System.out.println("Erro. Argumento Invalido.");
-                    scanner.nextLine();
-                    System.out.println();
-                }
-                break;
-            case 3:
-                try {
-                    sistema.alterar();
-                } catch (RuntimeException e) {
-                    System.out.println("Erro. Argumento Invalido.");
-                    scanner.nextLine();
-                    System.out.println();
-                }
-                break;
-            case 4:
-                try {
-                    sistema.remover();
-                } catch (RuntimeException e) {
-                    System.out.println("Erro. Argumento Invalido.");
-                    scanner.nextLine();
-                    System.out.println();
-                }
-                break;
-            case 5:
-                sistema.listarPetsCompleta();
-                break;
-            case 6:
-                sairTrue = false;
-                break;
+                    break;
+                case 2:
+                    try {
+                        getService().listarPetsPorCriterio();
+                    } catch (RuntimeException e) {
+                        getUi().errorExibir(e.getMessage());
+                    }
+                    break;
+                case 3:
+                    try {
+                        getService().alterar();
+                    } catch (RuntimeException e) {
+                        getUi().errorExibir(e.getMessage());
+                    }
+                    break;
+                case 4:
+                    try {
+                        getService().remover();
+                    } catch (RuntimeException e) {
+                        getUi().errorExibir(e.getMessage());
+                    }
+                    break;
+                case 5:
+                    getService().listarPetsCompleta();
+                    break;
+                case 6:
+                    sairTrue = false;
+                    break;
+            }
         }
+    }
+
+    private InterfaceUsarioCLI getUi() {
+        return ui;
+    }
+
+    private PetService getService() {
+        return service;
     }
 }
