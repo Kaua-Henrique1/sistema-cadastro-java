@@ -1,16 +1,39 @@
 package devKaua.projeto.application;
 
+import devKaua.projeto.domain.CriterioFiltro;
 import devKaua.projeto.domain.Pet;
+import devKaua.projeto.domain.Sexo;
+import devKaua.projeto.domain.TipoAnimal;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
+/**
+ * Adapter CLI que implementa a porta InterfaceDeUsario.
+ * <p>
+ * Melhorias aplicadas nesta versão:
+ * <p>
+ * 1. CRITÉRIOS ACUMULADOS — novos métodos de gerenciamento:
+ *    solicitarAcaoGerenciamentoCriterios() exibe critérios aplicados e oferece
+ *    menu de ações (adicionar/remover/buscar/sair).
+ *    solicitarCriterioParaRemover() permite remover critérios individualmente.
+ * <p>
+ * 2. solicitarSexoParaFiltro() exibe as opções do enum Sexo diretamente:
+ *    O usuário escolhe por número ao invés de digitar texto livre,
+ *    eliminando erros de digitação e tornando a busca mais intuitiva.
+ * <p>
+ * 3. solicitarCriterioFiltro() monta menu dinâmico a partir do enum.
+ * <p>
+ * 4. solicitarTipoAnimalParaConsulta() usa TipoAnimal.fromValor() com retry.
+ */
 public class InterfaceUsarioCLI implements InterfaceDeUsario {
-    Scanner scanner = new Scanner(System.in);
+    private final Scanner scanner = new Scanner(System.in);
 
     @Override
     public int selecionarOpcao() {
@@ -90,14 +113,6 @@ public class InterfaceUsarioCLI implements InterfaceDeUsario {
     }
 
     @Override
-    public int solicitarConfirmacaoSimNao() {
-        System.out.println("Deseja adicionar mais um critério (1= Sim/2= Não): ");
-        int adicionarConsulta = this.scanner.nextInt();
-        this.scanner.nextLine();
-        return adicionarConsulta;
-    }
-
-    @Override
     public int numeroPetListFiltrada() {
         System.out.println("Informe o número do pet para essa ação: ");
         int numeroPet = this.scanner.nextInt();
@@ -139,15 +154,24 @@ public class InterfaceUsarioCLI implements InterfaceDeUsario {
     }
 
     @Override
-    public int solicitarOpcaoFiltro() {
-        System.out.println("---------------------------");
-        System.out.println("Digite apenas de '1' a '6'.");
-        System.out.println("(1 = nome ou sobrenome/ 2 = idade/ 3 = Raça )");
-        System.out.println("(4 = Peso/ 5 = Sexo/ 6 = Cidade )");
-        System.out.println("---------------------------");
-        int opcao = this.scanner.nextInt();
-        this.scanner.nextLine();
-        return opcao;
+    public CriterioFiltro solicitarCriterioFiltro() {
+        CriterioFiltro criterio = null;
+        while (criterio == null) {
+            System.out.println("---------------------------");
+            System.out.println("Escolha o critério de filtro:");
+            for (CriterioFiltro c : CriterioFiltro.values()) {
+                System.out.println("  " + c.valor() + " = " + c.descricao());
+            }
+            System.out.println("---------------------------");
+            try {
+                int opcao = this.scanner.nextInt();
+                this.scanner.nextLine();
+                criterio = CriterioFiltro.fromValor(opcao);
+            } catch (IllegalArgumentException e) {
+                System.out.println("Opção inválida. Tente novamente.");
+            }
+        }
+        return criterio;
     }
 
     @Override
@@ -156,14 +180,96 @@ public class InterfaceUsarioCLI implements InterfaceDeUsario {
         return this.scanner.nextLine();
     }
 
+    /**
+     * Exibe as opções do enum Sexo diretamente e retorna a escolha do usuário.
+     * O usuário escolhe por número — elimina erros de digitação de texto livre
+     * e garante que apenas valores válidos sejam selecionados.
+     */
+    @Override
+    public Sexo solicitarSexoParaFiltro() {
+        Sexo sexo = null;
+        while (sexo == null) {
+            System.out.println("Escolha o sexo para filtrar:");
+            for (Sexo s : Sexo.values()) {
+                System.out.println("  " + s.valor() + " = " + s.tipo());
+            }
+            try {
+                int opcao = this.scanner.nextInt();
+                this.scanner.nextLine();
+                sexo = Sexo.fromValor(opcao);
+            } catch (IllegalArgumentException e) {
+                System.out.println("Opção inválida. Tente novamente.");
+            }
+        }
+        return sexo;
+    }
+
+    /**
+     * Exibe os critérios atualmente aplicados e solicita uma ação ao usuário.
+     * O menu mostra claramente o estado atual da busca e as opções disponíveis.
+     * Se não houver critérios, a opção de remover é desabilitada visualmente.
+     */
+    @Override
+    public int solicitarAcaoGerenciamentoCriterios(Map<CriterioFiltro, String> criterios) {
+        System.out.println("===========================");
+        if (criterios.isEmpty()) {
+            System.out.println("Nenhum critério aplicado ainda.");
+        } else {
+            System.out.println("Critérios aplicados:");
+            int i = 1;
+            for (Map.Entry<CriterioFiltro, String> entry : criterios.entrySet()) {
+                System.out.println("  " + i + ". " + entry.getKey().descricao() + " = " + entry.getValue());
+                i++;
+            }
+        }
+        System.out.println("===========================");
+        System.out.println("1 = Adicionar critério");
+        if (!criterios.isEmpty()) {
+            System.out.println("2 = Remover critério");
+        }
+        System.out.println("3 = Executar busca");
+        System.out.println("4 = Sair (voltar ao menu)");
+        System.out.println("===========================");
+
+        int acao;
+        do {
+            acao = this.scanner.nextInt();
+            this.scanner.nextLine();
+        } while (acao < 1 || acao > 4 || (acao == 2 && criterios.isEmpty()));
+
+        return acao;
+    }
+
+    /**
+     * Exibe os critérios numerados e solicita qual remover.
+     * Retorna o CriterioFiltro correspondente ao número escolhido.
+     */
+    @Override
+    public CriterioFiltro solicitarCriterioParaRemover(Map<CriterioFiltro, String> criterios) {
+        List<CriterioFiltro> chaves = new ArrayList<>(criterios.keySet());
+        System.out.println("Qual critério deseja remover?");
+        for (int i = 0; i < chaves.size(); i++) {
+            CriterioFiltro c = chaves.get(i);
+            System.out.println("  " + (i + 1) + ". " + c.descricao() + " = " + criterios.get(c));
+        }
+
+        int indice;
+        do {
+            indice = this.scanner.nextInt();
+            this.scanner.nextLine();
+        } while (indice < 1 || indice > chaves.size());
+
+        return chaves.get(indice - 1);
+    }
+
     @Override
     public void exibirListaPets(List<Pet> listaAtual) {
         StringBuilder builder = new StringBuilder();
         int contador = 0;
-        System.out.println("Pets Cadastrados com base na sua consulta: ");
         for (Pet pet : listaAtual) {
-            builder.append(++contador + " - " + pet.toString());
+            builder.append(++contador).append(" - ").append(pet.toString()).append("\n");
         }
+        System.out.println("Pets Cadastrados com base na sua consulta: \n" + builder);
     }
 
     @Override
@@ -188,18 +294,46 @@ public class InterfaceUsarioCLI implements InterfaceDeUsario {
     }
 
     @Override
-    public int consultaCachorroOuGato() {
-        System.out.println("Digite apenas '1' e '2'.");
-        System.out.println("(1 = Consulta Cachorro/ 2 = Consulta por Gato: ");
-        int respostaTipoAnimal = this.scanner.nextInt();
-        this.scanner.nextLine();
-        return respostaTipoAnimal;
+    public TipoAnimal solicitarTipoAnimalParaConsulta() {
+        TipoAnimal tipo = null;
+        while (tipo == null) {
+            System.out.println("Escolha o tipo de animal:");
+            System.out.println("  1 = Cachorro");
+            System.out.println("  2 = Gato");
+            try {
+                int resposta = this.scanner.nextInt();
+                this.scanner.nextLine();
+                tipo = TipoAnimal.fromValor(resposta);
+            } catch (IllegalArgumentException e) {
+                System.out.println("Opção inválida. Tente novamente.");
+            }
+        }
+        return tipo;
     }
 
+    @Override
+    public TipoAnimal solicitarTipoAnimalParaFiltro() {
+        TipoAnimal tipo = null;
+        while (tipo == null) {
+            System.out.println("Escolha o tipo de animal para filtrar:");
+            for (TipoAnimal t : TipoAnimal.values()) {
+                System.out.println("  " + t.valor() + " = " + t.animal());
+            }
+            try {
+                int resposta = this.scanner.nextInt();
+                this.scanner.nextLine();
+                tipo = TipoAnimal.fromValor(resposta);
+            } catch (IllegalArgumentException e) {
+                System.out.println("Opção inválida. Tente novamente.");
+            }
+        }
+        return tipo;
+    }
+
+    @Override
     public void leituraFormulario() {
         File formulario = new File("sistema-cadastro/formulario/formulario.txt");
-        try (FileReader fileReader = new FileReader(formulario)) {
-            BufferedReader br = new BufferedReader(fileReader);
+        try (BufferedReader br = new BufferedReader(new FileReader(formulario))) {
             String linha;
             while ((linha = br.readLine()) != null) {
                 System.out.println(linha);
