@@ -1,10 +1,8 @@
 # Sistema de Cadastro de Pets
 
 Um sistema de cadastro desenvolvido em Java que roda via terminal (CLI). O projeto realiza operações de **CRUD** (Cadastro, Consulta, Atualização e Remoção) de Pets.
-O foco principal é a **lógica de manipulação de arquivos .txt** (persistência manual), validação de dados com **Regex** e tratamento robusto de exceções.
 
-> O objetivo é treinar lógica de programação pura, por enquanto está sem dependência de bancos de dados ou frameworks.
-> Pretendo futuramente refatorar os arquivos.txt em PostgreSQL e com Spring Boot.  
+A arquitetura foi estruturada utilizando os princípios de **DDD (Domain-Driven Design)**, garantindo a padronização das camadas e facilitando a manutenção e escalabilidade do projeto no futuro. O foco principal permanece na **lógica de manipulação de arquivos.txt** (persistência manual), validação de dados com **Regex** e tratamento robusto de **exceções**.
 
 
 ## Referência e Desafio
