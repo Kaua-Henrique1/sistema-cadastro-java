@@ -1,0 +1,14 @@
+version: '2.4'
+services:
+  database:
+    image: postgres
+    container_name: cadastro_pets
+    environment:
+      POSTGRES_PASSWORD: banco123
+    ports:
+      - "5434:5432"
+    volumes:
+      - devkaua_data:/var/lib/postgresql
+
+volumes:
+  devkaua_data:
