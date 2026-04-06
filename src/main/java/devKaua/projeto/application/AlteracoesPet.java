@@ -1,10 +1,12 @@
-package devKaua.application;
+package devKaua.projeto.application;
 
 import devKaua.projeto.domain.*;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Service
 public class AlteracoesPet {
     private List<Pet> consultaNome(List<Pet> listaAtual, String nome) {
         List<Pet> listaFiltrada = new ArrayList<>();

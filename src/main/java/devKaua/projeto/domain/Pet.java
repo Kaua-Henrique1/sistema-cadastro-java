@@ -1,28 +1,33 @@
-package devKaua.domain;
+package devKaua.projeto.domain;
+
+import jakarta.persistence.*;
 
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Entity
+@Table(name = "tb_pet")
 public class Pet {
-    private static final AtomicLong idGenerator = new AtomicLong(1);
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long ID;
 
     private String nome;
+    @Embedded
     private Endereco endereco;
+    @Enumerated(EnumType.STRING)
     private Sexo sexo;
+    @Enumerated(EnumType.STRING)
     private TipoAnimal tipoAnimal;
+
     private String idade;
     private String peso;
     private String raca;
     public static final String SEM_DADOS = "NÃO INFORMADO";
 
-    public Pet(Long id, String nome, Endereco endereco, Sexo sexo, TipoAnimal tipoAnimal, String idade, String peso, String raca) {
-        if (id == null) {
-            this.ID = idGenerator.getAndIncrement();
-        } else {
-            this.ID = id;
-        }
+    public Pet(String nome, Endereco endereco, Sexo sexo, TipoAnimal tipoAnimal, String idade, String peso, String raca) {
         setNome(nome);
         setIdade(idade);
         setPeso(peso);
@@ -33,7 +38,6 @@ public class Pet {
     }
 
     public Pet() {
-        this.ID = idGenerator.getAndIncrement();
     }
 
     @Override
@@ -127,12 +131,6 @@ public class Pet {
             throw new IllegalArgumentException("Raça inválida! Escreva apenas letras.");
         }
         this.raca = raca;
-    }
-
-    public static void atualizarGerador(Long maiorIdEncontrado) {
-        if (maiorIdEncontrado >= idGenerator.get()) {
-            idGenerator.set(maiorIdEncontrado + 1);
-        }
     }
 
     public Long getID() {

@@ -1,4 +1,4 @@
-package devKaua.application;
+package devKaua.projeto.application;
 
 import devKaua.projeto.domain.Pet;
 

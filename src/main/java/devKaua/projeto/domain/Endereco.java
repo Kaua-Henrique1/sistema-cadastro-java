@@ -1,4 +1,4 @@
-package devKaua.domain;
+package devKaua.projeto.domain;
 
 public class Endereco {
     private String rua;
@@ -15,6 +15,8 @@ public class Endereco {
             this.numero = numero;
         }
     }
+
+    Endereco(){}
 
     @Override
     public String toString() {

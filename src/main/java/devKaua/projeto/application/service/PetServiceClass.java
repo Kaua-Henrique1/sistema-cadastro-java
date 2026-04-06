@@ -1,23 +1,28 @@
-package devKaua.application;
+package devKaua.projeto.application.service;
 
+import devKaua.projeto.application.AlteracoesPet;
+import devKaua.projeto.application.InterfaceUsarioCLI;
+import devKaua.projeto.application.repository.PetPersistenciaJPA;
 import devKaua.projeto.domain.*;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Service
 public class PetServiceClass implements PetService {
     private AlteracoesPet alteracoesPet;
     private InterfaceUsarioCLI ui;
-    private PersistenciaDadosTXT persistencia;
+    private PetPersistenciaJPA persistencia;
     public static final String SEM_DADOS = "NÃO INFORMADO";
 
-    public PetServiceClass(InterfaceUsarioCLI ui, PersistenciaDadosTXT persistenciaDadosTXT) {
+    public PetServiceClass(InterfaceUsarioCLI ui, PetPersistenciaJPA petRepository) {
         this.ui = ui;
-        this.persistencia = persistenciaDadosTXT;
+        this.persistencia = petRepository;
         this.alteracoesPet = new AlteracoesPet();
     }
 
-    private PersistenciaDadosTXT getPersistencia() {
+    private PetPersistenciaJPA getPersistencia() {
         return persistencia;
     }
 
@@ -52,7 +57,7 @@ public class PetServiceClass implements PetService {
                 idadePet = getUi().solicitarIdade();
                 pesoPet = getUi().solicitarPeso();
 
-                atributos = new Pet(null, nomePet,enderecoPet,sexoPet,tipoPet,idadePet,pesoPet,racaPet);
+                atributos = new Pet(nomePet,enderecoPet,sexoPet,tipoPet,idadePet,pesoPet,racaPet);
             } catch (IllegalArgumentException e) {
                 getUi().erroSalvarObjPet();
             }
@@ -70,7 +75,7 @@ public class PetServiceClass implements PetService {
             pesoPet = SEM_DADOS;
         }
 
-        Pet novoPet = new Pet(null,nomePet,enderecoPet,sexoPet,tipoPet,idadePet,pesoPet,racaPet);
+        Pet novoPet = new Pet(nomePet,enderecoPet,sexoPet,tipoPet,idadePet,pesoPet,racaPet);
         String enderecoPetStr = enderecoPet.toFormatado();
 
         getPersistencia().salvar(novoPet, enderecoPetStr);
@@ -98,8 +103,7 @@ public class PetServiceClass implements PetService {
                                 String nomeNovo = getUi().solicitarNome();
 
                                 pets.setNome(nomeNovo);
-                                String novoNomeTxt = "1 - " + nomeNovo;
-                                boolean isTrue = getPersistencia().atualizar(pets, novoNomeTxt);
+                                boolean isTrue = getPersistencia().atualizar(pets);
 
                                 if (isTrue) {
                                     getUi().exibirPet(pets);
@@ -119,8 +123,7 @@ public class PetServiceClass implements PetService {
                                 String idadeNovo = getUi().solicitarIdade();
 
                                 pets.setIdade(idadeNovo);
-                                String novoIdadeTxt = "5 - " + idadeNovo + " anos";
-                                boolean isTrue = getPersistencia().atualizar(pets, novoIdadeTxt);
+                                boolean isTrue = getPersistencia().atualizar(pets);
 
                                 if (isTrue) {
                                     getUi().exibirPet(pets);
@@ -140,8 +143,7 @@ public class PetServiceClass implements PetService {
                                 String racaNovo = getUi().solicitarRaca();
 
                                 pets.setRaca(racaNovo);
-                                String novoRacaTxt = "7 - " + racaNovo;
-                                boolean isTrue = getPersistencia().atualizar(pets, novoRacaTxt);
+                                boolean isTrue = getPersistencia().atualizar(pets);
 
                                 if (isTrue) {
                                     getUi().exibirPet(pets);
@@ -161,8 +163,7 @@ public class PetServiceClass implements PetService {
                                 String pesoNovo = getUi().solicitarPeso();
 
                                 pets.setPeso(pesoNovo);
-                                String novoPesoTxt = "6 - " + pesoNovo+ "kg";
-                                boolean isTrue = getPersistencia().atualizar(pets, novoPesoTxt);
+                                boolean isTrue = getPersistencia().atualizar(pets);
 
                                 if (isTrue) {
                                     getUi().exibirPet(pets);

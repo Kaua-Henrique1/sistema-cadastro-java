@@ -1,10 +1,9 @@
-package devKaua.application;
+package devKaua.projeto.application.repository;
 
 import devKaua.projeto.domain.Pet;
 
 public interface PersistenceUnit {
-    boolean carregarDados();
     boolean salvar(Pet pet, String enderecoPetStr);
-    boolean atualizar(Pet pet, String linhaNova);
+    boolean atualizar(Pet pet);
     boolean deletar(Pet pet);
 }

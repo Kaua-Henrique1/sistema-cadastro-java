@@ -1,4 +1,7 @@
-package devKaua.application;
+package devKaua.projeto.application;
+
+import devKaua.projeto.application.service.PetService;
+import devKaua.projeto.application.service.PetServiceClass;
 
 public class MenuPrincipal {
     private final InterfaceUsarioCLI ui;
