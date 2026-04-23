@@ -1,6 +1,6 @@
-package devKaua.projeto.application.repository;
+package devKaua.projeto.infrastructure.repository;
 
-import devKaua.projeto.domain.Pet;
+import devKaua.projeto.domain.model.Pet;
 
 public interface PersistenceUnit {
     boolean salvar(Pet pet, String enderecoPetStr);

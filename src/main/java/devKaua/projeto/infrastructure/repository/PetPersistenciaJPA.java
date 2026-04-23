@@ -1,11 +1,12 @@
-package devKaua.projeto.application.repository;
+package devKaua.projeto.infrastructure.repository;
 
-import devKaua.projeto.domain.Pet;
+import devKaua.projeto.domain.model.Pet;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Repository
@@ -36,22 +37,27 @@ public class PetPersistenciaJPA implements PersistenceUnit {
     }
 
     @Override
-    public boolean deletar(Pet pet) {
+    public boolean deletar(Long id) {
         try {
-            repository.deleteById(pet.getID());
+            repository.deleteById(id);
             return true;
         } catch (Exception e) {
-            log.error("Erro ao tentar deletar pet: '{}'", pet, e);
+            log.error("Erro ao tentar deletar pet", e);
             return false;
         }
     }
 
-    public List<Pet> getListaPet() {
+    public List<Pet> listaTodosPet() {
         try {
             return repository.findAll();
         } catch (Exception e) {
             log.error("Erro ao tentar listar todos os Pets:", e);
             return null;
         }
+    }
+
+    public List<Pet> listaPetPorCriterio() {
+        repository.findById();
+        repository.fin
     }
 }

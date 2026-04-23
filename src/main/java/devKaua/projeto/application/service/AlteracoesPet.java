@@ -1,6 +1,6 @@
-package devKaua.projeto.application;
+package devKaua.projeto.application.service;
 
-import devKaua.projeto.domain.*;
+import devKaua.projeto.domain.model.Pet;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

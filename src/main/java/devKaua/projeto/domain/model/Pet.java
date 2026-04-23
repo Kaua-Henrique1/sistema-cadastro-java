@@ -1,33 +1,27 @@
-package devKaua.projeto.domain;
+package devKaua.projeto.domain.model;
 
-import jakarta.persistence.*;
+import devKaua.projeto.domain.enums.Sexo;
+import devKaua.projeto.domain.enums.TipoAnimal;
 
-import java.util.concurrent.atomic.AtomicLong;
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Entity
-@Table(name = "tb_pet")
 public class Pet {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long ID;
+    private Long id_pet;
 
     private String nome;
-    @Embedded
     private Endereco endereco;
-    @Enumerated(EnumType.STRING)
     private Sexo sexo;
-    @Enumerated(EnumType.STRING)
     private TipoAnimal tipoAnimal;
 
-    private String idade;
+    private LocalDate dataNascimento;
     private String peso;
     private String raca;
     public static final String SEM_DADOS = "NÃO INFORMADO";
 
-    public Pet(String nome, Endereco endereco, Sexo sexo, TipoAnimal tipoAnimal, String idade, String peso, String raca) {
+    public Pet(String nome, Endereco endereco, Sexo sexo, TipoAnimal tipoAnimal, LocalDate idade, String peso, String raca) {
         setNome(nome);
         setIdade(idade);
         setPeso(peso);
@@ -42,7 +36,7 @@ public class Pet {
 
     @Override
     public String toString() {
-        return (". " + getID() + " - " + getNome() + " - " + getEndereco().toString() + " - " + getTipoAnimal() + " - "
+        return (". " + getId_pet() + " - " + getNome() + " - " + getEndereco().toString() + " - " + getTipoAnimal() + " - "
                 + getSexo() + " - " + getIdade() + " anos - " + getPeso() + "kg - " + getRaca()
         );
     }
@@ -56,7 +50,9 @@ public class Pet {
     }
 
     public String getIdade() {
-        return idade;
+        if (this.dataNascimento == null) return SEM_DADOS;
+        int years = Period.between(this.dataNascimento, LocalDate.now()).getYears();
+        return String.valueOf(years);
     }
 
     public String getPeso() {
@@ -90,18 +86,15 @@ public class Pet {
         this.nome = nome;
     }
 
-    public void setIdade(String idade) {
-        if (idade.isEmpty()) {
-            this.idade = SEM_DADOS;
+    public void setIdade(LocalDate idade) {
+        if (idade == null) {
             return;
         }
-        String regexIdadePeso = "[0-9]+((\\\\.|,)[0-9]+)?";
-        Pattern regraIdadePeso = Pattern.compile(regexIdadePeso);
-        Matcher condicionalIdade = regraIdadePeso.matcher(idade);
-        if (Double.parseDouble(idade) > 60 || !condicionalIdade.find()) {
-            throw new IllegalArgumentException("Idade inválida! Escreva apenas números entre 0.1 Anos até 60 anos.");
+        int years = Period.between(idade, LocalDate.now()).getYears();
+        if (years <= 0 || years >= 60) {
+            throw new IllegalArgumentException("Idade inválida! Digite uma data que fique entre 0.1 Anos até 60 anos.");
         }
-        this.idade = idade;
+        this.dataNascimento = idade;
     }
 
     public void setPeso(String peso) {
@@ -133,7 +126,7 @@ public class Pet {
         this.raca = raca;
     }
 
-    public Long getID() {
-        return ID;
+    public Long getId_pet() {
+        return id_pet;
     }
 }

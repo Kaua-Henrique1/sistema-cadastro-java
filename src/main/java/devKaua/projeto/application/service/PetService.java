@@ -1,13 +1,16 @@
 package devKaua.projeto.application.service;
 
-import devKaua.projeto.domain.Pet;
+import devKaua.projeto.application.dtos.PetDto;
+import devKaua.projeto.domain.model.Pet;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface PetService {
-    void cadastrar();
-    void alterar();
-    void remover();
-    void listarPetsCompleta();
+    boolean cadastrar(PetDto petDto);
+    boolean alterar(PetDto petDto);
+    boolean remover(Long id);
+    boolean listarPetsCompleta();
     List<Pet> listarPetsPorCriterio();
+    void listarTodosPets();
 }

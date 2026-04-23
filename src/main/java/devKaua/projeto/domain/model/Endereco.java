@@ -1,4 +1,4 @@
-package devKaua.projeto.domain;
+package devKaua.projeto.domain.model;
 
 public class Endereco {
     private String rua;

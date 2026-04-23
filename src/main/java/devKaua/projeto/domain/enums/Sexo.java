@@ -1,4 +1,4 @@
-package devKaua.projeto.domain;
+package devKaua.projeto.domain.enums;
 
 public enum Sexo {
     MACHO(1,"Macho"),
