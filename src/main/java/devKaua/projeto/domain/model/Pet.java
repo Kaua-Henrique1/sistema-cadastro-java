@@ -129,4 +129,8 @@ public class Pet {
     public Long getId_pet() {
         return id_pet;
     }
+
+    public LocalDate getDataNascimento() {
+        return dataNascimento;
+    }
 }
