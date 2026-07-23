@@ -6,7 +6,7 @@ import java.util.Map;
 public class PetFacade {
     private final InterfaceDeUsuario ui;
     private final PetService petService;
-    private final AdotanteService adotanteService; // Novo Serviço injetado
+    private final AdotanteService adotanteService;
 
     public PetFacade(InterfaceDeUsuario ui, PetService petService, AdotanteService adotanteService) {
         this.ui = ui;
@@ -59,7 +59,7 @@ public class PetFacade {
                 ui.errorExibir("Erro ao processar a deleção do tutor.");
             }
         } else {
-            System.out.println("Operação cancelada.");
+            ui.exibirMensagemOperacaoCancelada();
         }
     }
 
@@ -70,7 +70,7 @@ public class PetFacade {
         int opcaoCampo = ui.solicitarOpcaoAlterarAdotante();
         String novoValor = "";
 
-        System.out.println("\n--- DIGITE O NOVO VALOR ---");
+        ui.exibirCabecalhoNovoValor();
         switch (opcaoCampo) {
             case 1 -> novoValor = ui.solicitarNomeAdotante();
             case 2 -> novoValor = ui.solicitarTelefoneAdotante();
@@ -87,9 +87,7 @@ public class PetFacade {
             ui.errorExibir(resultadoAlteracao.substring(5));
         } else {
             ui.exibirSucesso("Dados do tutor atualizados com sucesso!");
-            System.out.println("=== DADOS ATUALIZADOS ===");
-            System.out.println(resultadoAlteracao);
-            System.out.println("=========================\n");
+            ui.exibirDadosAtualizados(resultadoAlteracao);
         }
     }
 
@@ -116,11 +114,9 @@ public class PetFacade {
     }
 
     private int localizarTutorEObterIndice(String tituloPasso) {
-        System.out.println("\n=============================================");
-        System.out.println("       " + tituloPasso + "            ");
-        System.out.println("=============================================");
+        ui.exibirCabecalhoPasso(tituloPasso);
 
-        if (!gerenciarCriteriosFluxoAdotantes()) return -1; // -1 significa operação abortada
+        if (!gerenciarCriteriosFluxoAdotantes()) return -1;
 
         String listagem = adotanteService.executarBuscaTutoresComCriterios(petService);
         if ("VAZIO".equals(listagem)) {
@@ -133,9 +129,7 @@ public class PetFacade {
     }
 
     private int selecionarPetDoTutorEObterIndice(Long idTutor, String tituloPasso) {
-        System.out.println("\n=============================================");
-        System.out.println("   " + tituloPasso + "    ");
-        System.out.println("=============================================");
+        ui.exibirCabecalhoPasso(tituloPasso);
 
         String listagemPetsDoTutor = petService.listarPetsDoTutor(idTutor);
         if ("VAZIO".equals(listagemPetsDoTutor)) {
@@ -166,7 +160,6 @@ public class PetFacade {
     }
 
     private void buscarTutoresPorCriterio() {
-        // Reutiliza a UI de critérios que você já tem pronta!
         if (!gerenciarCriteriosFluxoAdotantes()) return;
 
         String listagem = adotanteService.executarBuscaTutoresComCriterios(petService);
@@ -176,6 +169,7 @@ public class PetFacade {
             ui.exibirListaTutores(listagem);
         }
     }
+
     public void cadastrarAdotante() {
         String nome = ui.solicitarNomeAdotante();
         String cpf = ui.solicitarCpfAdotante();
@@ -195,12 +189,9 @@ public class PetFacade {
     }
 
     public void vincularPetAdotante() {
-        // --- PASSO 1: LOCALIZAR O ADOTANTE ---
-        System.out.println("\n=============================================");
-        System.out.println("   PASSO 1: LOCALIZAR O ADOTANTE DESEJADO   ");
-        System.out.println("=============================================");
+        ui.exibirCabecalhoPasso("PASSO 1: LOCALIZAR O ADOTANTE DESEJADO");
         if (!gerenciarCriteriosFluxoAdotantes()) {
-            System.out.println("Operação cancelada.");
+            ui.exibirMensagemOperacaoCancelada();
             return;
         }
 
@@ -212,12 +203,9 @@ public class PetFacade {
         ui.exibirListaAdotantes(listagemAdotantes);
         Long idAdotante = ui.solicitarIdAdotante();
 
-
-        System.out.println("\n=============================================");
-        System.out.println("     PASSO 2: LOCALIZAR O PET DESEJADO       ");
-        System.out.println("=============================================");
+        ui.exibirCabecalhoPasso("PASSO 2: LOCALIZAR O PET DESEJADO");
         if (!gerenciarCriteriosFluxoPets()) {
-            System.out.println("Operação cancelada.");
+            ui.exibirMensagemOperacaoCancelada();
             return;
         }
 
@@ -229,7 +217,6 @@ public class PetFacade {
         ui.exibirListaPets(listagemPets);
         Long idPet = ui.solicitarIdPet();
 
-        // --- PASSO 3: EXECUTAR VÍNCULO E VALIDAÇÕES ---
         String resultado = petService.vincularTutorAoPet(idAdotante, idPet, adotanteService);
 
         if ("SUCESSO".equals(resultado)) {
@@ -238,8 +225,8 @@ public class PetFacade {
             ui.errorExibir(resultado);
         }
     }
+
     public void alterarAdotante() {
-        // Usa o gerenciador de critérios específico para Adotantes
         if (!gerenciarCriteriosFluxoAdotantes()) return;
 
         String listagem = adotanteService.executarBuscaComCriteriosAtuais();
@@ -247,10 +234,10 @@ public class PetFacade {
             ui.exibirMensagemErrorConsulta();
             return;
         }
-        ui.exibirListaAdotantes(listagem); // Certifique-se de ter esse método na UI
+        ui.exibirListaAdotantes(listagem);
 
-        int numeroAdotante = ui.numeroAdotanteListFiltrada(); // Método na UI para pegar o índice escolhido
-        int opcaoCampo = ui.solicitarOpcaoAlterarAdotante(); // Opções: 1-Nome, 2-Telefone, 3-Email
+        int numeroAdotante = ui.numeroAdotanteListFiltrada();
+        int opcaoCampo = ui.solicitarOpcaoAlterarAdotante();
 
         String novoValor = switch (opcaoCampo) {
             case 1 -> ui.solicitarNomeAdotante();
@@ -262,14 +249,13 @@ public class PetFacade {
         String resultado = adotanteService.alterarCampoAdotante(numeroAdotante, opcaoCampo, novoValor);
 
         if ("SUCESSO".equals(resultado)) {
-            ui.exibirMensagemAlteracaoConcluida(); // "Alteração concluída com sucesso!"
+            ui.exibirMensagemAlteracaoConcluida();
         } else if (resultado.startsWith("ERRO:")) {
-            ui.errorExibir(resultado.substring(5)); // Exibe o erro de validação vindo do Domínio
+            ui.errorExibir(resultado.substring(5));
         }
     }
 
     public void removerAdotante() {
-        // Reutiliza o gerenciador de critérios que criamos na US07
         if (!gerenciarCriteriosFluxoAdotantes()) return;
 
         String listagem = adotanteService.executarBuscaComCriteriosAtuais();
@@ -287,7 +273,6 @@ public class PetFacade {
             return;
         }
 
-        // Pede a confirmação "SIM" ou "NÃO" (reutilizando a lógica visual do pet)
         String confirmacao = ui.confirmacaoDeletarAdotante(nomeAdotante);
 
         if (confirmacao.equalsIgnoreCase("SIM")) {
@@ -304,7 +289,7 @@ public class PetFacade {
 
             switch (acao) {
                 case 1 -> {
-                    int opcaoCrit = ui.solicitarCriterioFiltroAdotante(); // Ex: 1-Nome, 2-CPF
+                    int opcaoCrit = ui.solicitarCriterioFiltroAdotante();
                     String valor = ui.solicitarTextoBusca();
                     adotanteService.adicionarCriterio(opcaoCrit, valor);
                 }
@@ -313,8 +298,8 @@ public class PetFacade {
                     int indice = ui.solicitarCriterioParaRemover(descricoes);
                     adotanteService.removerCriterioPorIndice(indice);
                 }
-                case 3 -> { return true; } // Filtrar e continuar
-                case 4 -> { return false; } // Cancelar e voltar
+                case 3 -> { return true; }
+                case 4 -> { return false; }
             }
         }
     }
@@ -330,9 +315,7 @@ public class PetFacade {
 
         String resposta = petService.cadastrar(tipo, sexo, endereco, nome, raca, idade, peso);
 
-        if ("SUCESSO".equals(resposta)) {
-            // Sucesso opcionalmente tratado pelo fluxo principal
-        } else {
+        if (!"SUCESSO".equals(resposta)) {
             ui.erroSalvarObjPet();
         }
     }

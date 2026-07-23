@@ -1,10 +1,5 @@
 package devKaua.projeto.application;
 
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -454,5 +449,30 @@ public class InterfaceUsuarioCLI implements InterfaceDeUsuario {
     @Override
     public void mensagemDeletarAdotante() {
         System.out.println("Adotante removido com sucesso!");
+    }
+
+    @Override
+    public void exibirMensagemOperacaoCancelada() {
+        System.out.println("Operação cancelada.");
+    }
+
+    @Override
+    public void exibirCabecalhoNovoValor() {
+        System.out.println("\n--- DIGITE O NOVO VALOR ---");
+    }
+
+    @Override
+    public void exibirDadosAtualizados(String dados) {
+        System.out.println("=== DADOS ATUALIZADOS ===");
+        System.out.println(dados);
+        System.out.println("=========================\n");
+    }
+
+    @Override
+    public void exibirCabecalhoPasso(String tituloPasso) {
+        System.out.println("\n=============================================");
+        // Uma forma simples de centralizar visualmente ou apenas imprimir
+        System.out.println("   " + tituloPasso + "   ");
+        System.out.println("=============================================");
     }
 }

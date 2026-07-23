@@ -63,4 +63,9 @@ public interface InterfaceDeUsuario {
     void exibirListaTutores(String listagem);
     String confirmacaoDeletarTutor(String nomeTutor);
     void mensagemDeletarTutorSucesso();
+
+    void exibirMensagemOperacaoCancelada();
+    void exibirCabecalhoNovoValor();
+    void exibirDadosAtualizados(String dados);
+    void exibirCabecalhoPasso(String tituloPasso);
 }
