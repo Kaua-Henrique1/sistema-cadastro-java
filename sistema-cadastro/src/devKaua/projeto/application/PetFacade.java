@@ -6,12 +6,12 @@ import java.util.Map;
 public class PetFacade {
     private final InterfaceDeUsuario ui;
     private final PetService petService;
-    private final AdotanteService adotanteService;
+    private final PessoaService pessoaService;
 
-    public PetFacade(InterfaceDeUsuario ui, PetService petService, AdotanteService adotanteService) {
+    public PetFacade(InterfaceDeUsuario ui, PetService petService, PessoaService pessoaService) {
         this.ui = ui;
         this.petService = petService;
-        this.adotanteService = adotanteService;
+        this.pessoaService = pessoaService;
     }
 
     public void executarAcaoPet(int opcao) {
@@ -42,15 +42,16 @@ public class PetFacade {
         int numeroTutor = localizarTutorEObterIndice("PASSO 1: LOCALIZAR O TUTOR");
         if (numeroTutor == -1) return;
 
-        String nomeTutor = adotanteService.obterNomeAdotantePorIndiceFiltrado(numeroTutor);
-        if ("INVALIDO".equals(nomeTutor)) {
+        String nomeTutor = pessoaService.obterNomePessoaPorIndiceFiltrado(numeroTutor);
+        if ("INVALIDO".equals(nomeTutor) || nomeTutor.isBlank()) {
             ui.errorExibir("Número do tutor inválido.");
             return;
         }
 
         String confirmacao = ui.confirmacaoDeletarTutor(nomeTutor);
         if (confirmacao.equalsIgnoreCase("SIM")) {
-            Long idTutorDeletado = adotanteService.removerTutorEObterId(numeroTutor);
+            // CORRIGIDO: removerTutorEObterId
+            Long idTutorDeletado = pessoaService.removerTutorEObterId(numeroTutor);
 
             if (idTutorDeletado != null) {
                 petService.desvincularPetsDoTutor(idTutorDeletado);
@@ -81,7 +82,8 @@ public class PetFacade {
             }
         }
 
-        String resultadoAlteracao = adotanteService.executarAlteracaoTutor(numeroTutor, opcaoCampo, novoValor, petService);
+        // CORRIGIDO: executarAlteracaoTutor
+        String resultadoAlteracao = pessoaService.executarAlteracaoTutor(numeroTutor, opcaoCampo, novoValor, petService);
 
         if (resultadoAlteracao.startsWith("ERRO:")) {
             ui.errorExibir(resultadoAlteracao.substring(5));
@@ -95,7 +97,7 @@ public class PetFacade {
         int numeroTutor = localizarTutorEObterIndice("PASSO 1: SELECIONAR O TUTOR");
         if (numeroTutor == -1) return;
 
-        Long idTutor = adotanteService.obterIdAdotantePorIndiceFiltrado(numeroTutor);
+        Long idTutor = pessoaService.obterIdPessoaPorIndiceFiltrado(numeroTutor);
         if (idTutor == null) {
             ui.errorExibir("Número do tutor inválido.");
             return;
@@ -118,8 +120,8 @@ public class PetFacade {
 
         if (!gerenciarCriteriosFluxoAdotantes()) return -1;
 
-        String listagem = adotanteService.executarBuscaTutoresComCriterios(petService);
-        if ("VAZIO".equals(listagem)) {
+        String listagem = pessoaService.executarBuscaTutoresComCriterios(petService);
+        if ("VAZIO".equals(listagem) || listagem.contains("Nenhuma pessoa encontrada")) {
             ui.exibirMensagemErrorConsulta();
             return -1;
         }
@@ -142,8 +144,9 @@ public class PetFacade {
     }
 
     private void listarTodosAdotantesPuros() {
-        String listagem = adotanteService.listarTodosAdotantesPuros(petService);
-        if ("VAZIO".equals(listagem)) {
+        // CORRIGIDO: listarTodasPessoas
+        String listagem = pessoaService.listarTodasPessoas(petService);
+        if ("VAZIO".equals(listagem) || listagem.contains("Nenhuma pessoa encontrada")) {
             ui.errorExibir("Nenhum adotante sem pet cadastrado no sistema.");
         } else {
             ui.exibirListaAdotantes(listagem);
@@ -151,8 +154,9 @@ public class PetFacade {
     }
 
     private void listarTodosTutores() {
-        String listagem = adotanteService.listarTodosTutores(petService);
-        if ("VAZIO".equals(listagem)) {
+        // CORRIGIDO: listarTodosTutores
+        String listagem = pessoaService.listarTodosTutores(petService);
+        if ("VAZIO".equals(listagem) || listagem.contains("Nenhuma pessoa encontrada")) {
             ui.errorExibir("Nenhum tutor (adotante com pet) registrado no sistema.");
         } else {
             ui.exibirListaTutores(listagem);
@@ -162,8 +166,8 @@ public class PetFacade {
     private void buscarTutoresPorCriterio() {
         if (!gerenciarCriteriosFluxoAdotantes()) return;
 
-        String listagem = adotanteService.executarBuscaTutoresComCriterios(petService);
-        if ("VAZIO".equals(listagem)) {
+        String listagem = pessoaService.executarBuscaTutoresComCriterios(petService);
+        if ("VAZIO".equals(listagem) || listagem.contains("Nenhuma pessoa encontrada")) {
             ui.exibirMensagemErrorConsulta();
         } else {
             ui.exibirListaTutores(listagem);
@@ -179,9 +183,9 @@ public class PetFacade {
         String telefone = ui.solicitarTelefoneAdotante();
         String email = ui.solicitarEmailAdotante();
 
-        String resposta = adotanteService.registrarAdotante(nome, cpf, rua, numero, cidade, telefone, email);
+        String resposta = pessoaService.registrarPessoa(nome, cpf, rua, numero, cidade, telefone, email);
 
-        if ("SUCESSO".equals(resposta)) {
+        if (resposta.startsWith("Pessoa cadastrada com sucesso!")) {
             ui.exibirSucesso("Adotante cadastrado com sucesso!");
         } else {
             ui.errorExibir(resposta);
@@ -195,8 +199,8 @@ public class PetFacade {
             return;
         }
 
-        String listagemAdotantes = adotanteService.executarBuscaComCriteriosAtuais();
-        if ("VAZIO".equals(listagemAdotantes)) {
+        String listagemAdotantes = pessoaService.executarBuscaComCriteriosAtuais();
+        if ("VAZIO".equals(listagemAdotantes) || listagemAdotantes.contains("Nenhuma pessoa encontrada")) {
             ui.exibirMensagemErrorConsulta();
             return;
         }
@@ -217,7 +221,7 @@ public class PetFacade {
         ui.exibirListaPets(listagemPets);
         Long idPet = ui.solicitarIdPet();
 
-        String resultado = petService.vincularTutorAoPet(idAdotante, idPet, adotanteService);
+        String resultado = petService.vincularTutorAoPet(idAdotante, idPet, pessoaService);
 
         if ("SUCESSO".equals(resultado)) {
             ui.exibirSucesso("Adotante promovido a Tutor e Pet vinculado com sucesso!");
@@ -229,8 +233,8 @@ public class PetFacade {
     public void alterarAdotante() {
         if (!gerenciarCriteriosFluxoAdotantes()) return;
 
-        String listagem = adotanteService.executarBuscaComCriteriosAtuais();
-        if ("VAZIO".equals(listagem)) {
+        String listagem = pessoaService.executarBuscaComCriteriosAtuais();
+        if ("VAZIO".equals(listagem) || listagem.contains("Nenhuma pessoa encontrada")) {
             ui.exibirMensagemErrorConsulta();
             return;
         }
@@ -246,29 +250,29 @@ public class PetFacade {
             default -> "";
         };
 
-        String resultado = adotanteService.alterarCampoAdotante(numeroAdotante, opcaoCampo, novoValor);
+        String resultado = pessoaService.alterarCampoPessoa(numeroAdotante, opcaoCampo, novoValor);
 
-        if ("SUCESSO".equals(resultado)) {
+        if (resultado.contains("sucesso")) {
             ui.exibirMensagemAlteracaoConcluida();
-        } else if (resultado.startsWith("ERRO:")) {
-            ui.errorExibir(resultado.substring(5));
+        } else {
+            ui.errorExibir(resultado);
         }
     }
 
     public void removerAdotante() {
         if (!gerenciarCriteriosFluxoAdotantes()) return;
 
-        String listagem = adotanteService.executarBuscaComCriteriosAtuais();
-        if ("VAZIO".equals(listagem)) {
+        String listagem = pessoaService.executarBuscaComCriteriosAtuais();
+        if ("VAZIO".equals(listagem) || listagem.contains("Nenhuma pessoa encontrada")) {
             ui.exibirMensagemErrorConsulta();
             return;
         }
         ui.exibirListaAdotantes(listagem);
 
         int numeroAdotante = ui.numeroAdotanteListFiltrada();
-        String nomeAdotante = adotanteService.obterNomeAdotante(numeroAdotante);
+        String nomeAdotante = pessoaService.obterNomePessoa(numeroAdotante);
 
-        if ("INVALIDO".equals(nomeAdotante)) {
+        if (nomeAdotante.isBlank()) {
             ui.errorExibir("Número do adotante inválido.");
             return;
         }
@@ -276,27 +280,27 @@ public class PetFacade {
         String confirmacao = ui.confirmacaoDeletarAdotante(nomeAdotante);
 
         if (confirmacao.equalsIgnoreCase("SIM")) {
-            adotanteService.removerAdotante(numeroAdotante);
+            pessoaService.removerPessoa(numeroAdotante);
             ui.mensagemDeletarAdotante();
         }
     }
 
     private boolean gerenciarCriteriosFluxoAdotantes() {
-        adotanteService.limparCriterios();
+        pessoaService.limparCriterios();
         while (true) {
-            Map<String, String> dadosExibicao = adotanteService.obterCriteriosParaExibicao();
+            Map<String, String> dadosExibicao = pessoaService.obterCriteriosParaExibicao();
             int acao = ui.solicitarAcaoGerenciamentoCriterios(dadosExibicao);
 
             switch (acao) {
                 case 1 -> {
                     int opcaoCrit = ui.solicitarCriterioFiltroAdotante();
                     String valor = ui.solicitarTextoBusca();
-                    adotanteService.adicionarCriterio(opcaoCrit, valor);
+                    pessoaService.adicionarCriterio(opcaoCrit, valor);
                 }
                 case 2 -> {
-                    List<String> descricoes = adotanteService.obterDescricoesCriteriosAtivos();
+                    List<String> descricoes = pessoaService.obterDescricoesCriteriosAtivos();
                     int indice = ui.solicitarCriterioParaRemover(descricoes);
-                    adotanteService.removerCriterioPorIndice(indice);
+                    pessoaService.removerCriterioPorIndice(indice);
                 }
                 case 3 -> { return true; }
                 case 4 -> { return false; }

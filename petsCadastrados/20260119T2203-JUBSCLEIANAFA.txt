@@ -6,3 +6,4 @@ ID - 10
 5 - 18 anos
 6 - 7kg
 7 - Viralata
+8 - 2

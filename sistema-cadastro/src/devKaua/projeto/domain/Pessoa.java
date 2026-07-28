@@ -1,52 +1,67 @@
 package devKaua.projeto.domain;
-
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Pattern;
 
-public abstract class Pessoa {
+import devKaua.projeto.application.PetService;
 
+public class Pessoa {
+
+    public static final String SEM_DADOS = "SEM DADOS";
     private static final AtomicLong idGenerator = new AtomicLong(1);
-    public static final String SEM_DADOS = "NÃO INFORMADO";
 
-    private final Long id;
+    private Long id;
     private String nome;
     private String cpf;
     private String telefone;
     private String email;
-    private final Endereco endereco;
+    private Endereco endereco;
 
-    protected Pessoa(String nome, String cpf, String telefone, String email, Endereco endereco) {
-        if (endereco == null) {
-            throw new IllegalArgumentException("Endereço é obrigatório.");
-        }
-
-        // INTERCEPTAÇÃO: Se o endereço foi criado com "NÃO INFORMADO" (SEM_DADOS), a Pessoa recusa!
-        if (endereco.getNumero().equals("NÃO INFORMADO")) {
-            throw new IllegalArgumentException("Para cadastrar uma pessoa (Adotante/Tutor), o número do endereço é obrigatório!");
-        }
-
-        this.id = idGenerator.getAndIncrement();
-        setNome(nome);
-        setCpf(cpf);
-        setTelefone(telefone);
-        setEmail(email);
-        this.endereco = endereco;
+    // Construtor completo (usado ao carregar dados existentes, ex: TXT/Banco)
+    public Pessoa(Long id, String nome, String cpf, String telefone, String email, Endereco endereco) {
+        this.id = id;
+        this.nome = (nome != null && !nome.isBlank()) ? nome : SEM_DADOS;
+        this.cpf = (cpf != null && !cpf.isBlank()) ? cpf : SEM_DADOS;
+        this.telefone = (telefone != null && !telefone.isBlank()) ? telefone : SEM_DADOS;
+        this.email = (email != null && !email.isBlank()) ? email : SEM_DADOS;
+        this.endereco = (endereco != null) ? endereco : new Endereco(SEM_DADOS, SEM_DADOS, SEM_DADOS);
     }
 
-    // --- Construtor para Reconstituição (Leitura do TXT - Não incrementa ID) ---
-    protected Pessoa(Long id, String nome, String cpf, String telefone, String email, Endereco endereco) {
-        if (id == null) {
-            throw new IllegalArgumentException("ID é obrigatório para reconstituição.");
+    public static Pessoa criar(String nome, String cpf, String telefone, String email, Endereco endereco) {
+        Long novoId = idGenerator.getAndIncrement();
+        return new Pessoa(novoId, nome, cpf, telefone, email, endereco);
+    }
+
+    public boolean isTutor(PetService petService) {
+        if (petService == null || this.id == null) {
+            return false;
         }
-        if (endereco == null) {
-            throw new IllegalArgumentException("Endereço é obrigatório.");
+        return petService.obterListaDeObjetosPets().stream()
+                .anyMatch(pet -> Objects.equals(pet.getTutorId(), this.id));
+    }
+
+    public void alterarNome(String novoNome) {
+        if (novoNome != null && !novoNome.isBlank()) {
+            this.setNome(novoNome);
         }
-        this.id = id;
-        setNome(nome);
-        setCpf(cpf);
-        setTelefone(telefone);
-        setEmail(email);
-        this.endereco = endereco;
+    }
+
+    public void alterarTelefone(String novoTelefone) {
+        if (novoTelefone != null && !novoTelefone.isBlank()) {
+            this.setTelefone(novoTelefone);
+        }
+    }
+
+    public void alterarEmail(String novoEmail) {
+        if (novoEmail != null && !novoEmail.isBlank()) {
+            this.setEmail(novoEmail);
+        }
+    }
+
+    public static void atualizarGerador(Long maiorIdEncontrado) {
+        if (maiorIdEncontrado != null && maiorIdEncontrado >= idGenerator.get()) {
+            idGenerator.set(maiorIdEncontrado + 1);
+        }
     }
 
     private void setNome(String nome) {
@@ -97,23 +112,53 @@ public abstract class Pessoa {
         this.email = email.trim().toLowerCase();
     }
 
-    // --- Getters ---
-    public Long getID() { return id; }
-    public String getNome() { return nome; }
-    public String getCpf() { return cpf; }
-    public String getTelefone() { return telefone; }
-    public String getEmail() { return email; }
-    public Endereco getEndereco() { return endereco; }
 
-    // --- Métodos de Alteração (Abertos para o Service/Facade) ---
-    public void alterarNome(String nome) { setNome(nome); }
-    public void alterarTelefone(String telefone) { setTelefone(telefone); }
-    public void alterarEmail(String email) { setEmail(email); }
+    public Long getId() {
+        return id;
+    }
 
-    // --- Sincronização do Gerador com o TXT ---
-    public static void atualizarGerador(Long maiorIdEncontrado) {
-        if (maiorIdEncontrado >= idGenerator.get()) {
-            idGenerator.set(maiorIdEncontrado + 1);
-        }
+    public String getNome() {
+        return nome;
+    }
+
+    public String getCpf() {
+        return cpf;
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public Endereco getEndereco() {
+        return endereco;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Pessoa pessoa = (Pessoa) o;
+        return Objects.equals(id, pessoa.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Pessoa{" +
+                "id=" + id +
+                ", nome='" + nome + '\'' +
+                ", cpf='" + cpf + '\'' +
+                ", telefone='" + telefone + '\'' +
+                ", email='" + email + '\'' +
+                ", endereco=" + endereco +
+                '}';
     }
 }

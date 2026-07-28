@@ -72,12 +72,12 @@ public class PetService {
         }
     }
 
-    public String vincularTutorAoPet(Long idAdotante, Long idPet, AdotanteService adotanteService) {
-        Optional<Adotante> adotanteOpt = adotanteService.buscarAdotantePorId(idAdotante);
-        if (adotanteOpt.isEmpty()) {
-            return "Operação Abortada: O ID do Adotante informado não existe no sistema.";
+    // --- MÉTODOS ATUALIZADOS PARA USAR PESSOA ---
+    public String vincularTutorAoPet(Long idPessoa, Long idPet, PessoaService pessoaService) {
+        Optional<Pessoa> pessoaOpt = pessoaService.buscarPessoaPorId(idPessoa);
+        if (pessoaOpt.isEmpty()) {
+            return "Operação Abortada: O ID da Pessoa informada não existe no sistema.";
         }
-        Adotante adotante = adotanteOpt.get();
 
         Optional<Pet> petOpt = repository.buscarPorId(idPet);
         if (petOpt.isEmpty()) {
@@ -90,12 +90,9 @@ public class PetService {
         }
 
         try {
-            Tutor tutor = Tutor.promoverAdotante(adotante);
-            tutor.adicionarPet(pet);
-
-            pet.vincularTutor(idAdotante);
-
-            repository.atualizar(pet, "8 - " + idAdotante);
+            // Vincula o ID da pessoa ao pet e persiste no arquivo TXT
+            pet.vincularTutor(idPessoa);
+            repository.atualizar(pet, "8 - " + idPessoa);
             return "SUCESSO";
 
         } catch (Exception e) {
@@ -205,7 +202,7 @@ public class PetService {
     }
 
     public List<Pet> obterListaDeObjetosPets() {
-        return repository.listarTodos(); // Retorna a lista de objetos, não a String!
+        return repository.listarTodos();
     }
 
     public void desvincularPetsDoTutor(Long idTutor) {
@@ -214,8 +211,7 @@ public class PetService {
         for (Pet pet : todosOsPets) {
             if (pet.getTutorId() != null && pet.getTutorId().equals(idTutor)) {
                 repository.atualizar(pet, "8 - ");
-
-                pet.alterarNome(pet.getNome());
+                pet.desvincularTutor();
             }
         }
     }
