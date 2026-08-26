@@ -3,12 +3,12 @@ package devKaua.projeto.application;
 import java.util.List;
 import java.util.Map;
 
-public class PetFacade {
+public class InterfaceFacade {
     private final InterfaceDeUsuario ui;
     private final PetService petService;
     private final PessoaService pessoaService;
 
-    public PetFacade(InterfaceDeUsuario ui, PetService petService, PessoaService pessoaService) {
+    public InterfaceFacade(InterfaceDeUsuario ui, PetService petService, PessoaService pessoaService) {
         this.ui = ui;
         this.petService = petService;
         this.pessoaService = pessoaService;
@@ -50,7 +50,6 @@ public class PetFacade {
 
         String confirmacao = ui.confirmacaoDeletarTutor(nomeTutor);
         if (confirmacao.equalsIgnoreCase("SIM")) {
-            // CORRIGIDO: removerTutorEObterId
             Long idTutorDeletado = pessoaService.removerTutorEObterId(numeroTutor);
 
             if (idTutorDeletado != null) {
@@ -82,7 +81,6 @@ public class PetFacade {
             }
         }
 
-        // CORRIGIDO: executarAlteracaoTutor
         String resultadoAlteracao = pessoaService.executarAlteracaoTutor(numeroTutor, opcaoCampo, novoValor, petService);
 
         if (resultadoAlteracao.startsWith("ERRO:")) {
@@ -144,7 +142,6 @@ public class PetFacade {
     }
 
     private void listarTodosAdotantesPuros() {
-        // CORRIGIDO: listarTodasPessoas
         String listagem = pessoaService.listarTodasPessoas(petService);
         if ("VAZIO".equals(listagem) || listagem.contains("Nenhuma pessoa encontrada")) {
             ui.errorExibir("Nenhum adotante sem pet cadastrado no sistema.");

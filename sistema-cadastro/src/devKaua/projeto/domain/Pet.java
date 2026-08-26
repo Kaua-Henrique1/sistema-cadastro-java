@@ -18,7 +18,7 @@ public class Pet {
     private String idade;
     private String peso;
     private String raca;
-    private Long tutorId; // 🔄 NOVO ATRIBUTO: Guarda o ID do Adotante que virou Tutor
+    private Long tutorId;
 
     // --- Construtor para Reconstituição COMPLETA (Lendo do TXT com Tutor) ---
     public Pet(Long id, String nome, Endereco endereco, Sexo sexo,
@@ -35,12 +35,6 @@ public class Pet {
         this.sexo = sexo;
         this.tipoAnimal = tipoAnimal;
         this.tutorId = tutorId; // Restaura o vínculo salvo
-    }
-
-    // --- Construtor antigo mantido para retrocompatibilidade se necessário ---
-    public Pet(Long id, String nome, Endereco endereco, Sexo sexo,
-               TipoAnimal tipoAnimal, String idade, String peso, String raca) {
-        this(id, nome, endereco, sexo, tipoAnimal, idade, peso, raca, null);
     }
 
     // --- Construtor privado para o Factory Method ---

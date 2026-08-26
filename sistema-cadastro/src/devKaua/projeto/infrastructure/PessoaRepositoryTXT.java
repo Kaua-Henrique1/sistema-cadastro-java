@@ -117,7 +117,6 @@ public class PessoaRepositoryTXT implements PessoaRepository {
             if (filePessoa.isFile() && filePessoa.getName().endsWith(".txt")) {
                 if (isPessoaInFile(pessoaAntiga, filePessoa)) {
 
-                    // Sobrescreve o arquivo inteiro com os novos dados
                     try (BufferedWriter bw = new BufferedWriter(new FileWriter(filePessoa))) {
                         bw.write("ID - " + pessoaAtualizada.getId()); bw.newLine();
                         bw.write("1 - " + pessoaAtualizada.getNome()); bw.newLine();

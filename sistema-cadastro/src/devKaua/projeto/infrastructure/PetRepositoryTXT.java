@@ -52,7 +52,6 @@ public class PetRepositoryTXT implements PetRepository {
                     String pesoPet = br.readLine().split(" - ")[1].replace("kg", "");
                     String racaPet = br.readLine().split(" - ")[1];
 
-                    // Tenta ler a linha do Tutor se ela existir no arquivo
                     Long tutorId = null;
                     String linhaTutor = br.readLine();
                     if (linhaTutor != null && linhaTutor.startsWith("8 - ")) {
@@ -63,7 +62,6 @@ public class PetRepositoryTXT implements PetRepository {
                         maiorIdEncontrado = idPet;
                     }
 
-                    // Instancia o Pet usando o construtor completo com Tutor
                     Pet novoPet = new Pet(idPet, nomePet, enderecoPet, sexoPet, tipoPet, idadePet, pesoPet, racaPet, tutorId);
                     this.listaPet.add(novoPet);
 
@@ -125,7 +123,6 @@ public class PetRepositoryTXT implements PetRepository {
                 List<String> linhasArquivo = new ArrayList<>();
                 boolean arquivoAlvo = false;
 
-                // 1. Lê todas as linhas existentes dinamicamente
                 try (BufferedReader br = new BufferedReader(new FileReader(filePet))) {
                     String linha = br.readLine();
                     if (linha != null && linha.equals("ID - " + pet.getID())) {
@@ -141,7 +138,6 @@ public class PetRepositoryTXT implements PetRepository {
 
                 if (!arquivoAlvo) continue;
 
-                // 2. Grava de volta substituindo o campo atualizado ou adicionando se for novo (como o Tutor)
                 try (BufferedWriter bw = new BufferedWriter(new FileWriter(filePet))) {
                     String linhaNovaCortada = linhaNova.substring(0, 3); // Ex: "8 - "
                     boolean linhaSubstituida = false;

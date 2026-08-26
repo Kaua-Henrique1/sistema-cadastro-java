@@ -21,7 +21,6 @@ public class PessoaService {
         this.criteriosAtivos = new LinkedHashMap<>();
     }
 
-    // --- CADASTRAR / REGISTRAR ---
     public String registrarPessoa(String nome, String cpf, String rua, String numero, String cidade, String telefone, String email) {
         Endereco endereco = new Endereco(rua, numero, cidade);
         Pessoa novaPessoa = Pessoa.criar(nome, cpf, telefone, email, endereco);
@@ -29,7 +28,6 @@ public class PessoaService {
         return "Pessoa cadastrada com sucesso! ID: " + novaPessoa.getId();
     }
 
-    // --- GERENCIAMENTO DE FILTROS / CRITÉRIOS ---
     public void limparCriterios() {
         this.criteriosAtivos.clear();
         this.listaFiltrada.clear();
@@ -69,7 +67,6 @@ public class PessoaService {
         return formatarListaParaTexto(this.listaFiltrada);
     }
 
-    // --- CONSULTAS E LISTAGENS ---
     public Optional<Pessoa> buscarPessoaPorId(Long id) {
         return pessoaRepository.buscarPorId(id);
     }
@@ -98,7 +95,6 @@ public class PessoaService {
         return formatarListaParaTexto(this.listaFiltrada);
     }
 
-    // --- ALTERAÇÕES E REMOÇÕES ---
     public String alterarCampoPessoa(int numeroPessoa, int opcaoCampo, String novoValor) {
         Pessoa pessoa = obterPessoaPorIndiceFiltrado(numeroPessoa);
         if (pessoa == null) {
@@ -146,7 +142,6 @@ public class PessoaService {
         return alterarCampoPessoa(numeroTutor, opcaoCampo, novoValor);
     }
 
-    // --- MÉTODOS AUXILIARES ---
     public String obterNomePessoa(int numeroPessoa) {
         Pessoa p = obterPessoaPorIndiceFiltrado(numeroPessoa);
         return p != null ? p.getNome() : "";

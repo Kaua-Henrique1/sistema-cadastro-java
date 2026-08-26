@@ -72,7 +72,6 @@ public class PetService {
         }
     }
 
-    // --- MÉTODOS ATUALIZADOS PARA USAR PESSOA ---
     public String vincularTutorAoPet(Long idPessoa, Long idPet, PessoaService pessoaService) {
         Optional<Pessoa> pessoaOpt = pessoaService.buscarPessoaPorId(idPessoa);
         if (pessoaOpt.isEmpty()) {
@@ -90,7 +89,6 @@ public class PetService {
         }
 
         try {
-            // Vincula o ID da pessoa ao pet e persiste no arquivo TXT
             pet.vincularTutor(idPessoa);
             repository.atualizar(pet, "8 - " + idPessoa);
             return "SUCESSO";

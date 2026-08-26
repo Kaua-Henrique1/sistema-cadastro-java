@@ -19,7 +19,7 @@ public class GeradorDaONG {
         PessoaService pessoaService = new PessoaService(pessoaRepository);
         InterfaceDeUsuario ui = new InterfaceUsuarioCLI();
 
-        PetFacade facade = new PetFacade(ui, petService, pessoaService);
+        InterfaceFacade facade = new InterfaceFacade(ui, petService, pessoaService);
 
         ui.iniciarFluxoPrincipal(facade);
     }

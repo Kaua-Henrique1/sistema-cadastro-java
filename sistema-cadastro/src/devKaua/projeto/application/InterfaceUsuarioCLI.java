@@ -8,7 +8,7 @@ public class InterfaceUsuarioCLI implements InterfaceDeUsuario {
     private final Scanner scanner = new Scanner(System.in);
 
     @Override
-    public void iniciarFluxoPrincipal(PetFacade facade) {
+    public void iniciarFluxoPrincipal(InterfaceFacade facade) {
         int opcao = 0;
         while (opcao != 4) {
             printMenuPrincipal();
@@ -102,7 +102,7 @@ public class InterfaceUsuarioCLI implements InterfaceDeUsuario {
         System.out.println("----------------------------------");
     }
 
-    private void gerenciarMenuPets(PetFacade facade) {
+    private void gerenciarMenuPets(InterfaceFacade facade) {
         int opcaoSub = 0;
         while (opcaoSub != 6) {
             printSubMenuPets();
@@ -115,7 +115,7 @@ public class InterfaceUsuarioCLI implements InterfaceDeUsuario {
         }
     }
 
-    private void gerenciarMenuPessoas(PetFacade facade) {
+    private void gerenciarMenuPessoas(InterfaceFacade facade) {
         int opcaoSub = 0;
         while (opcaoSub != 10) {
             printSubMenuPessoas();
@@ -471,7 +471,6 @@ public class InterfaceUsuarioCLI implements InterfaceDeUsuario {
     @Override
     public void exibirCabecalhoPasso(String tituloPasso) {
         System.out.println("\n=============================================");
-        // Uma forma simples de centralizar visualmente ou apenas imprimir
         System.out.println("   " + tituloPasso + "   ");
         System.out.println("=============================================");
     }
